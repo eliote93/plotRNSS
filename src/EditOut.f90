@@ -83,10 +83,11 @@ WRITE (indev, '(A9, X, 3L6, A21)') "LOGICAL",   lerr, lrel, l3d,         " ! err
 WRITE (indev, '(A9, X, 3I6, A19)') "String",    xstr2d, ystr2d, nsize2d, " ! x, y, size"
 WRITE (indev, '(A9, X, 4I6)')      "GCF",       gcf2D(1:4)
 WRITE (indev, '(A9, X, 4F6.3)')    "GCA",       gca2D(1:4)
-WRITE (indev, *)
 
 ! Info. : Ax.
-WRITE (indev, '(A5/)') "$ Ax."
+IF (.NOT. l3d) RETURN
+
+WRITE (indev, '(/A5/)') "$ Ax."
 
 IF (.NOT.lerr .AND. lrel) THEN
   nn = 2
@@ -110,7 +111,7 @@ END SUBROUTINE editinfo
 SUBROUTINE editgrid()
 
 USE param, ONLY : FALSE, HALF, ONE, ZERO, SQ3, io2
-USE mdat,  ONLY : nxy, nz, objfn, plotobj, aoF2F, hgt, cntxy
+USE mdat,  ONLY : l3d, nxy, nz, objfn, plotobj, aoF2F, hgt, cntxy
 
 IMPLICIT NONE
 
@@ -143,10 +144,10 @@ DO ixy = 1, nxy(plotobj)
   WRITE (indev, '(I4, X, 12ES13.5)') ixy, x1, y1
 END DO
 
-WRITE (indev, *)
-
 ! Ax.
-WRITE (indev, '(A5)') "$ Ax."
+IF (.NOT. l3d) RETURN
+
+WRITE (indev, '(/A5)') "$ Ax."
 WRITE (indev, '(5X, A13)') "Thk."
 
 DO iz = 1, nz
@@ -198,8 +199,7 @@ END DO
 ! Ax.
 IF (.NOT. l3d) RETURN
 
-WRITE (indev, *)
-WRITE (indev, '(A5/)') "$ Ax."
+WRITE (indev, '(/A5/)') "$ Ax."
 
 IF (lerr) THEN
   WRITE (indev, '(A6, X, ES13.5)') "Max.", erraxmax
