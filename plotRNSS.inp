@@ -1,0 +1,38 @@
+ID_01        RN / BOILER_CORE_3D_FC
+! ID_02        RN / S0
+aoF2F        7.2
+plot_Err     F  1 ! Err. = plot obj - other obj
+cal_Rel      F
+tpos_2d      47 -55
+tsize_2d     25
+gcf_2d       500 100 1070 800
+gca_2d       0.11  0.035 0.75  1.05
+tpos_1d      10 0.2
+tsize_1d     30
+gcf_1d       500 100 1050 730
+gca_1d       0.11 0.16 0.86 0.82
+hgt          20*4.          ! Boiler Core New
+zlim         1.5
+.
+
+! 2-D
+! xstr ystr / nsize / gcf / gca
+
+  47  -55 /  20 / 500 100 1070 820 / 0.11  0.035 0.77  1.05  ! Boiler Core, Err
+  47  -55 /  25 / 500 100 1070 800 / 0.11  0.035 0.75  1.05  ! Boiler Core, Pow
+
+! 1-D
+! xstr ystr / nsize / gcf / gca
+
+  10  0.  / 30 / 500  100 1050 730 / 0.125 0.17  0.85  0.8  ! Boiler Core, Err
+  10  0.2 / 30 / 500  100 1050 730 / 0.11  0.16  0.86  0.82 ! Boiler Core, Pow
+
+! Hgt
+
+hgt          2*4. 8*8. 2*4. ! Boiler Core Old
+hgt          20*4.          ! Boiler Core New
+
+! zlim
+
+zlim         0.5 ! Err.
+zlim         1.5 ! Pow. NTH
