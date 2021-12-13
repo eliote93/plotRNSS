@@ -2,7 +2,7 @@ SUBROUTINE calpowerr_3D()
 
 USE allocs
 USE param, ONLY : ZERO, MP
-USE mdat,  ONLY : lerr, lrel, l3d, powerr, ndat, errmax, errrms, nz, nxy, avghgt, hgt, plotobj, pow3d
+USE mdat,  ONLY : lerr, lrel, l3d, powerr, ndat, errplnmax, errplnrms, nz, nxy, avghgt, hgt, plotobj, pow3d
 
 IMPLICIT NONE
 
@@ -10,8 +10,8 @@ INTEGER :: iz, ixy, jobj, mxy
 REAL :: tot01, tot02, rnrm
 ! ------------------------------------------------
 
-CALL dmalloc(errmax, nz)
-CALL dmalloc(errrms, nz)
+CALL dmalloc0(errplnmax, 0, nz)
+CALL dmalloc0(errplnrms, 0, nz)
 
 IF (.NOT. lerr) RETURN
 
@@ -58,18 +58,18 @@ END IF
 !            04. SUMMARIZE
 ! ------------------------------------------------
 DO iz = 1, nz
-  errmax(iz) = max(maxval(powerr(:, iz)), abs(minval(powerr(:, iz))))
+  errplnmax(iz) = max(maxval(powerr(:, iz)), abs(minval(powerr(:, iz))))
   
   DO ixy = 1, mxy
-    errrms(iz) = errrms(iz) + powerr(ixy, iz) * powerr(ixy, iz)
+    errplnrms(iz) = errplnrms(iz) + powerr(ixy, iz) * powerr(ixy, iz)
   END DO
   
-  errrms(iz) = sqrt(errrms(iz) / real(mxy))
+  errplnrms(iz) = sqrt(errplnrms(iz) / real(mxy))
 END DO
 
 IF (.NOT. l3d) THEN
-  WRITE (*, '(A31, F5.2, X, A3)') '2-D Power Error Max. : ', errmax(1), '(%)'
-  WRITE (*, '(A31, F5.2, X, A3)') '2-D Power Error RMS  : ', errrms(1), '(%)'
+  errplnmax(0) = errplnmax(1)
+  errplnrms(0) = errplnrms(1)
 END IF
 ! ------------------------------------------------
 

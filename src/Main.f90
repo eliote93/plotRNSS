@@ -19,6 +19,9 @@ CALL plotpow
 CALL calpowerr_3D
 CALL calpowerr_int
 
+CALL printout
+CALL editinfo
+CALL editgrid
 CALL editout
 
 END PROGRAM plotRNSS

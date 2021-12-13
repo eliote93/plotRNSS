@@ -1,8 +1,8 @@
 SUBROUTINE readMASTER_New(iobj, fn)
 
 USE allocs
-USE param, ONLY : TRUE, DALLR, DOT, BLANK, oneline, probe
-USE mdat,  ONLY : indev, nxa, nya, nxy, nz, ndat, powxy, powax, pow3d, l3d, avghgt, hgt
+USE param, ONLY : TRUE, DALLR, DOT, BLANK, oneline, probe, io1
+USE mdat,  ONLY : nxa, nya, nxy, nz, ndat, powxy, powax, pow3d, l3d, avghgt, hgt
 
 IMPLICIT NONE
 
@@ -11,12 +11,13 @@ CHARACTER(*), INTENT(IN) :: fn
 ! ------------------------------------------------
 CHARACTER*100 :: gn
 
-INTEGER :: Lgh, fndndata, itmp, mya, mxy, mxy1, mxy2, iz
+INTEGER :: Lgh, fndndata, itmp, mya, mxy, mxy1, mxy2, iz, indev
 REAL :: totpow, rnrm, rtmp
 ! ------------------------------------------------
 
-gn  = 'MASTER\' // trim(fn) // '.out'
-mya = 0
+indev = io1
+gn    = 'MASTER\' // trim(fn) // '.out'
+mya   = 0
 
 CALL openfile(indev, TRUE, gn)
 ! ------------------------------------------------
@@ -139,6 +140,8 @@ DO
 END DO
 
 2000 CONTINUE
+
+CLOSE (indev) ! 1
 ! ------------------------------------------------
 !            03. NORM
 ! ------------------------------------------------

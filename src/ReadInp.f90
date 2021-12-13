@@ -1,14 +1,14 @@
 SUBROUTINE readinp
 
 USE allocs
-USE param, ONLY : DOT, BANG, BLANK, SLASH, TRUE, FALSE, ZERO, MP, oneline, probe
-USE mdat,  ONLY : l3d, l02, objcn, objfn, lerr, plotobj, lrel, xstr2d, ystr2d, nsize2d, xstr1d, ystr1d, nsize1d, indev, gcf2d, gca2d, gcf1d, gca1d, nz, hgt, avghgt, zlim, aoF2F
+USE param, ONLY : DOT, BANG, BLANK, SLASH, TRUE, FALSE, ZERO, MP, oneline, probe, io1
+USE mdat,  ONLY : l3d, l02, objcn, objfn, lerr, plotobj, lrel, xstr2d, ystr2d, nsize2d, xstr1d, ystr1d, nsize1d, gcf2d, gca2d, gcf1d, gca1d, nz, hgt, avghgt, zlim, aoF2F
 
 IMPLICIT NONE
 
 CHARACTER*12 :: fn, cn, tmp2
 
-INTEGER :: lgh, fndndata, ndat, idat, nchr
+INTEGER :: lgh, fndndata, ndat, idat, nchr, indev
 INTEGER :: ipos(2)
 LOGICAL :: lext
 
@@ -16,7 +16,7 @@ CHARACTER*30, DIMENSION(100) :: tmp1
 ! ------------------------------------------------
 
 fn    = 'plotRNSS.inp'
-indev = 42
+indev = io1
 nz    = 1
 l02   = FALSE
 zlim  = ZERO
@@ -125,7 +125,7 @@ END DO
 ! ------------------------------------------------
 IF (probe .NE. DOT) CALL terminate("INPUT MUST END WITH DOT")
 
-CLOSE (indev)
+CLOSE (indev) ! 1
 
 ! CHK : plot mod
 IF (.NOT.l02 .AND. plotobj.EQ.2) CALL terminate("WRONG PLOTTING OBJECT")
