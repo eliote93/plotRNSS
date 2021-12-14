@@ -1,4 +1,4 @@
-ID_01        RN / BOILER_CORE_2D_FC
+ID_01        RN / BOILER_CORE_3D_FC
 ! ID_02        RN / S0
 aoF2F        7.2
 plot_Err     F  1 ! Err. = plot obj - other obj
@@ -7,6 +7,12 @@ tpos_2d      47 -55
 tsize_2d     25
 gcf_2d       500 100 1070 800
 gca_2d       0.11  0.035 0.75  1.05
+tpos_1d      10 0.2
+tsize_1d     30
+gcf_1d       500 100 1050 730
+gca_1d       0.11 0.16 0.86 0.82
+hgt          20*4.          ! Boiler Core New
+zlim         1.5
 .
 
 ! 2-D

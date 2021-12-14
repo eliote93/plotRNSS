@@ -85,7 +85,10 @@ WRITE (indev, '(A9, X, 4I6)')      "GCF",       gcf2D(1:4)
 WRITE (indev, '(A9, X, 4F6.3)')    "GCA",       gca2D(1:4)
 
 ! Info. : Ax.
-IF (.NOT. l3d) RETURN
+IF (.NOT. l3d) THEN
+  WRITE (indev, '(A1)') DOT
+  RETURN
+END IF
 
 WRITE (indev, '(/A5/)') "$ Ax."
 
@@ -96,7 +99,6 @@ ELSE
 END IF
 
 WRITE (indev, '(A9, X, 2I6, A25)')          "# of Dat.", nz, nn,                  " ! Pln., Img."
-WRITE (indev, '(A9, X, 3L6, A21)')          "LOGICAL",   lerr, lrel, l3d,         " ! err, rel, 3d"
 WRITE (indev, '(A9, X, I6, F6.3, I6, A19)') "String",    xstr1d, ystr1d, nsize1d, " ! x, y, size"
 WRITE (indev, '(A9, X, 4I6)')               "GCF",       gcf1D(1:4)
 WRITE (indev, '(A9, X, 4F6.3)')             "GCA",       gca1D(1:4)
@@ -110,7 +112,7 @@ END SUBROUTINE editinfo
 ! --------------------------------------------------------------------------------------------------
 SUBROUTINE editgrid()
 
-USE param, ONLY : FALSE, HALF, ONE, ZERO, SQ3, io2
+USE param, ONLY : FALSE, HALF, ONE, ZERO, SQ3, DOT, io2
 USE mdat,  ONLY : l3d, nxy, nz, objfn, plotobj, aoF2F, hgt, cntxy
 
 IMPLICIT NONE
@@ -145,7 +147,10 @@ DO ixy = 1, nxy(plotobj)
 END DO
 
 ! Ax.
-IF (.NOT. l3d) RETURN
+IF (.NOT. l3d) THEN
+  WRITE (indev, '(A1)') DOT
+  RETURN
+END IF
 
 WRITE (indev, '(/A5)') "$ Ax."
 WRITE (indev, '(5X, A13)') "Thk."
@@ -161,12 +166,12 @@ END SUBROUTINE editgrid
 ! --------------------------------------------------------------------------------------------------
 SUBROUTINE editout()
 
-USE param, ONLY : FALSE, MP, io2
+USE param, ONLY : FALSE, MP, DOT, BLANK, io2
 USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, lrel, powplnpf, errplnmax, errplnrms, powaxpf, erraxmax, erraxrms, powerr, powax
 
 IMPLICIT NONE
 
-INTEGER :: indev, ixy, iz, ist
+INTEGER :: indev, ixy, iz, ist, refobj
 CHARACTER*100 :: locfn
 ! ------------------------------------------------
 
@@ -183,44 +188,42 @@ ELSE
   ist = 1
 END IF
 
-WRITE (indev, '(A6, X, 1000I13)') "Legend", (iz, iz = ist, nz)
-
 IF (lerr) THEN
-  WRITE (indev, '(A6, X, 1000ES13.5)') "Max.", errplnmax(ist:nz)
-  WRITE (indev, '(A6, X, 1000ES13.5)') "RMS",  errplnrms(ist:nz)
+  WRITE (indev, '(A10, 2A13, 1000I13)') "Legend", "Max.", "RMS", (ixy, ixy = 1, nxy(plotobj))
+  
+  DO iz = ist, nz
+    WRITE (indev, '(I10, 1000ES13.5)') iz, errplnmax(iz), errplnrms(iz), (powerr(ixy, iz), ixy = 1, nxy(plotobj))
+  END DO
 ELSE
-  WRITE (indev, '(A6, X, 1000ES13.5)') "P.F.", powplnpf (ist:nz)
+  WRITE (indev, '(A10,  A13, 1000I13)') "Legend", "P.F.",        (ixy, ixy = 1, nxy(plotobj))
+  
+  DO iz = ist, nz
+    WRITE (indev, '(I10, 1000ES13.5)') iz, powplnpf(iz),                 (powerr(ixy, iz), ixy = 1, nxy(plotobj))
+  END DO
 END IF
 
-DO ixy = 1, nxy(plotobj)
-  WRITE (indev, '(I6, X, 1000ES13.5)') ixy, powerr(ixy, ist:nz)
-END DO
-
 ! Ax.
-IF (.NOT. l3d) RETURN
+IF (.NOT. l3d) THEN
+  WRITE (indev, '(A1)') DOT
+  RETURN
+END IF
 
 WRITE (indev, '(/A5/)') "$ Ax."
 
 IF (lerr) THEN
-  WRITE (indev, '(A6, X, ES13.5)') "Max.", erraxmax
-  WRITE (indev, '(A6, X, ES13.5)') "RMS",  erraxrms
+  WRITE (indev, '(A10, 2A13, 1000I13)') "Legend", "Max.", "RMS", (iz, iz = 1, nz)
+  
+  WRITE (indev, '(A10, 1000ES13.5)') objcn(plotobj), erraxmax, erraxrms, (powerr(0, iz), iz = 1, nz)
 ELSE
-  WRITE (indev, '(A6, X, ES13.5)') "P.F.",   powaxpf
+  WRITE (indev, '(A10,  A13, 1000I13)') "Legend", "P.F.",        (iz, iz = 1, nz)
+  WRITE (indev, '(A10, 1000ES13.5)') objcn(plotobj), powaxpf,            (powax(iz, plotobj), iz = 1, nz)
   
   IF (lrel) THEN
-    WRITE (indev, '(A6, X, 2A13)') "Legend", objcn(plotobj), objcn(MP(plotobj))
-  ELSE
-    WRITE (indev, '(A6, X,  A13)') "Legend", objcn(plotobj)
+    refobj = MP(plotobj)
+    
+    WRITE (indev, '(A10, A13, 1000ES13.5)') objcn(refobj), BLANK,        (powax(iz, refobj),  iz = 1, nz)
   END IF
 END IF
-
-DO iz = 1, nz
-  IF (.NOT.lerr .AND. lrel) THEN
-    WRITE (indev, '(I6, X, 2ES13.5)') iz, powax(iz, plotobj), powax(iz, MP(plotobj))
-  ELSE
-    WRITE (indev, '(I6, X,  ES13.5)') iz, powerr(0, iz)
-  END IF
-END DO
 
 CLOSE (indev) ! 2
 ! ------------------------------------------------
