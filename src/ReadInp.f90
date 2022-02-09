@@ -1,8 +1,8 @@
 SUBROUTINE readinp
 
 USE allocs
-USE param, ONLY : DOT, BANG, BLANK, SLASH, TRUE, FALSE, ZERO, MP, oneline, probe, io1
-USE mdat,  ONLY : l3d, l02, objcn, objfn, lerr, plotobj, lrel, xstr2d, ystr2d, nsize2d, xstr1d, ystr1d, nsize1d, gcf2d, gca2d, gcf1d, gca1d, nz, hgt, avghgt, zlim, aoF2F
+USE param, ONLY : DOT, BANG, BLANK, SLASH, TRUE, FALSE, ONE, MP, oneline, probe, io1
+USE mdat,  ONLY : l3d, l02, objcn, objfn, lerr, plotobj, lrel, xstr2d, ystr2d, nsize2d, xstr1d, ystr1d, nsize1d, gcf2d, gca2d, gcf1d, gca1d, nz, hgt, avghgt, xylim, zlim, aoF2F
 
 IMPLICIT NONE
 
@@ -19,7 +19,8 @@ fn    = 'plotRNSS.inp'
 indev = io1
 nz    = 1
 l02   = FALSE
-zlim  = ZERO
+xylim = ONE
+zlim  = ONE
 
 INQUIRE (FILE = fn, EXIST = lext)
 
@@ -112,6 +113,9 @@ DO
     CALL dmalloc(hgt, nz)
     
     READ (oneline, *) cn, hgt(1:nz)
+    
+  CASE ('XYLIM')
+    READ (oneline, *) cn, xylim
     
   CASE ('ZLIM')
     READ (oneline, *) cn, zlim

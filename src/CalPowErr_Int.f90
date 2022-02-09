@@ -1,4 +1,5 @@
 SUBROUTINE calpowerr_int()
+! INTEGRATE : 3-D into 2-D, 1-D
 
 USE param, ONLY : ZERO, MP
 USE mdat,  ONLY : lerr, l3d, lrel, plotobj, nz, nxy, ndat, nz, errtotmax, errtotrms, errplnmax, errplnrms, erraxmax, erraxrms, powerr, hgt, avghgt, powxy, powax

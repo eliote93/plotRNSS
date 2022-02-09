@@ -19,7 +19,7 @@ INTEGER, DIMENSION(100, 2)   :: nxa
 INTEGER, DIMENSION(2, 300)   :: asy1Dto2D ! (ix/iy, ixy)
 INTEGER, DIMENSION(100, 100) :: asy2Dto1D ! (ix, iy)
 ! ------------------------------------------------
-REAL :: aoF2F, avghgt, zlim, errtotmax, errtotrms, powtotpf, erraxmax, erraxrms, powaxpf
+REAL :: aoF2F, avghgt, xylim, zlim, errtotmax, errtotrms, powtotpf, erraxmax, erraxrms, powaxpf
 REAL :: ystr1d, gca2d(4), gca1d(4)
 
 REAL, DIMENSION(     100, 2) :: powax ! (iz, iobj)

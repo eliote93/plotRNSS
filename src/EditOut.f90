@@ -37,7 +37,7 @@ END SUBROUTINE printout
 SUBROUTINE editinfo()
 
 USE param, ONLY : FALSE, DOT, io1, io2, oneline, probe
-USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, lrel, zlim, xstr2d, ystr2d, nsize2d, gcf2d, gca2d, xstr1d, ystr1d, nsize1d, gcf1d, gca1d
+USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, lrel, xylim, zlim, xstr2d, ystr2d, nsize2d, gcf2d, gca2d, xstr1d, ystr1d, nsize1d, gcf1d, gca1d
 
 IMPLICIT NONE
 
@@ -83,7 +83,7 @@ WRITE (indev, '(A9, X, 3L6, A21)') "LOGICAL",   lerr, lrel, l3d,         " ! err
 WRITE (indev, '(A9, X, 3I6, A19)') "String",    xstr2d, ystr2d, nsize2d, " ! x, y, size"
 WRITE (indev, '(A9, X, 4I6)')      "GCF",       gcf2D(1:4)
 WRITE (indev, '(A9, X, 4F6.3)')    "GCA",       gca2D(1:4)
-WRITE (indev, '(A9, X, 2F6.1)')    "yMax",      0., 2.
+WRITE (indev, '(A9, X, 2F6.1)')    "yMax",      xylim
 
 IF (lerr) THEN
   WRITE (indev, '(A9, X, A30)')    "Label",     "Normalized Asy. Power Eror (%)"

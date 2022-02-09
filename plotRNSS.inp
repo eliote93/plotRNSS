@@ -1,5 +1,5 @@
-ID_01        RN / ARI
-ID_02        MN / ARI
+ID_01        MN / S0
+ID_02        RN / S0
 aoF2F        7.2
 plot_Err     T  2 ! Err. = plot obj - other obj
 cal_Rel      T
@@ -12,7 +12,8 @@ tsize_1d     30
 gcf_1d       500 100 1050 730
 gca_1d       0.125 0.17 0.85 0.8
 hgt          20*4.
-zlim         10.
+xylim        2.
+zlim         1.5
 .
 
 ! 2-D
