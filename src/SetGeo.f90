@@ -1,11 +1,11 @@
 SUBROUTINE setgeo
 
-USE param, ONLY : ZERO, SQ3, HALF
+USE param, ONLY : ZERO, SQ3, HALF, FILE1
 USE mdat,  ONLY : aoF2F, asy1Dto2D, asy2Dto1D, nxa, nya, cntxy
 
 IMPLICIT NONE
 
-INTEGER :: ix, iy, ixy, icx, icy, mxa
+INTEGER :: ix, iy, ixy, icx, icy, mxa, ny
 
 REAL :: aoPch, xx, yy
 ! ------------------------------------------------
@@ -17,8 +17,8 @@ cntxy     = ZERO
 ! SET : 1D to 2D map
 ixy = 0
 
-DO iy = 1, nya(1)
-  DO ix = 1, nxa(iy, 1)
+DO iy = 1, nya(FILE1)
+  DO ix = 1, nxa(iy, FILE1)
     ixy = ixy + 1
     
     asy1Dto2D(1, ixy) = ix
@@ -31,12 +31,12 @@ END DO
 ! SET : Cnt.
 aoPch = aoF2F / SQ3
 
-icy = (nya(1) + 1) / 2
+icy = (nya(FILE1) + 1) / 2
 
-DO iy = 1, nya(1)
+DO iy = 1, nya(FILE1)
   yy = (icy - iy) * aoPch * 1.5
   
-  mxa = nxa(iy, 1)
+  mxa = nxa(iy, FILE1)
   
   SELECT CASE (mod(mxa, 2))
   CASE (0)

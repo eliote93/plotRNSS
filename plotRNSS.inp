@@ -1,36 +1,41 @@
-ID_01        RN / BOILER_CORE_3D_FC
-! ID_02        RN / S0
+ID_01        RN / ARI
+ID_02        MN / ARI
 aoF2F        7.2
-plot_Err     F  1 ! Err. = plot obj - other obj
-cal_Rel      F
+plot_Err     T  2 ! Err. = plot obj - other obj
+cal_Rel      T
 tpos_2d      47 -55
-tsize_2d     25
+tsize_2d     20
 gcf_2d       500 100 1070 800
-gca_2d       0.11  0.035 0.75  1.05
-tpos_1d      10 0.2
+gca_2d       0.11  0.035 0.76  1.05
+tpos_1d      10 0.
 tsize_1d     30
 gcf_1d       500 100 1050 730
-gca_1d       0.11 0.16 0.86 0.82
-hgt          20*4.          ! Boiler Core New
-zlim         1.5
+gca_1d       0.125 0.17 0.85 0.8
+hgt          20*4.
+zlim         10.
 .
 
 ! 2-D
 ! xstr ystr / nsize / gcf / gca
 
-  47  -55 /  20 / 500 100 1070 820 / 0.11  0.035 0.77  1.05  ! Boiler Core, Err
+  47  -55 /  20 / 500 100 1070 800 / 0.11  0.035 0.76  1.05  ! Boiler Core, Err
   47  -55 /  25 / 500 100 1070 800 / 0.11  0.035 0.75  1.05  ! Boiler Core, Pow
+  47  -55 /  25 / 500 100 1070 800 / 0.11  0.035 0.75  1.05  ! PGFSR, Err
+  30  -35 /  23 / 500 100 1070 810 / 0.11  0.035 0.75  1.05  ! PGFSR, Pow
 
 ! 1-D
 ! xstr ystr / nsize / gcf / gca
 
   10  0.  / 30 / 500  100 1050 730 / 0.125 0.17  0.85  0.8  ! Boiler Core, Err
   10  0.2 / 30 / 500  100 1050 730 / 0.11  0.16  0.86  0.82 ! Boiler Core, Pow
+  10  0.  / 30 / 500  100 1050 730 / 0.125 0.17  0.85  0.8  ! PGFSR, Err
+  10  0.2 / 30 / 500  100 1050 730 / 0.11  0.16  0.86  0.82 ! pgfsr, Pow
 
 ! Hgt
 
-hgt          2*4. 8*8. 2*4. ! Boiler Core Old
-hgt          20*4.          ! Boiler Core New
+hgt          2*4. 8*8. 2*4.             ! Boiler Core Old
+hgt          20*4.                      ! Boiler Core New
+hgt          10*7.252  8.  8.867  8.433 ! PGFSR
 
 ! zlim
 

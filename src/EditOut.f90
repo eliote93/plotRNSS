@@ -58,7 +58,7 @@ WRITE (indev, '(A6/)') "$ Echo"
 
 DO
   READ  (jndev, '(A512)') oneline
-  WRITE (indev, '(A512)') oneline
+  WRITE (indev, '(A)') trim(oneline)
   
   IF (probe .NE. DOT) CYCLE
   
@@ -83,6 +83,13 @@ WRITE (indev, '(A9, X, 3L6, A21)') "LOGICAL",   lerr, lrel, l3d,         " ! err
 WRITE (indev, '(A9, X, 3I6, A19)') "String",    xstr2d, ystr2d, nsize2d, " ! x, y, size"
 WRITE (indev, '(A9, X, 4I6)')      "GCF",       gcf2D(1:4)
 WRITE (indev, '(A9, X, 4F6.3)')    "GCA",       gca2D(1:4)
+WRITE (indev, '(A9, X, 2F6.1)')    "yMax",      0., 2.
+
+IF (lerr) THEN
+  WRITE (indev, '(A9, X, A30)')    "Label",     "Normalized Asy. Power Eror (%)"
+ELSE
+  WRITE (indev, '(A9, X, A21)')    "Label",     "Normalized Asy. Power"
+END IF
 
 ! Info. : Ax.
 IF (.NOT. l3d) THEN
@@ -92,17 +99,20 @@ END IF
 
 WRITE (indev, '(/A5/)') "$ Ax."
 
-IF (.NOT.lerr .AND. lrel) THEN
-  nn = 2
-ELSE
-  nn = 1 ! Manually Inputted
-END IF
+nn = 1 ! Manually Inputted
 
 WRITE (indev, '(A9, X, 2I6, A25)')          "# of Dat.", nz, nn,                  " ! Pln., Img."
 WRITE (indev, '(A9, X, I6, F6.3, I6, A19)') "String",    xstr1d, ystr1d, nsize1d, " ! x, y, size"
 WRITE (indev, '(A9, X, 4I6)')               "GCF",       gcf1D(1:4)
 WRITE (indev, '(A9, X, 4F6.3)')             "GCA",       gca1D(1:4)
-WRITE (indev, '(A9, X, F6.3)')              "ZLIM",      zlim
+WRITE (indev, '(A9, X, F6.3)')              "yMax",      zlim
+
+IF (lerr) THEN
+  WRITE (indev, '(A9, X, A30)')    "Label",     "Normalized Pln. Power Eror (%)"
+ELSE
+  WRITE (indev, '(A9, X, A21)')    "Label",     "Normalized Pln. Power"
+END IF
+
 WRITE (indev, '(A1)') DOT
 
 CLOSE (indev) ! 2

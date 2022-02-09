@@ -13,7 +13,7 @@ INTEGER :: xstr2d, ystr2d, nsize2d, xstr1d, nsize1d
 INTEGER :: gcf2d(4), gcf1d(4)
 INTEGER :: plotobj, nz
 
-INTEGER, DIMENSION(2) :: nya, nxy, ndat
+INTEGER, DIMENSION(2) :: nya, nxy, ndat ! (ifile)
 
 INTEGER, DIMENSION(100, 2)   :: nxa
 INTEGER, DIMENSION(2, 300)   :: asy1Dto2D ! (ix/iy, ixy)
