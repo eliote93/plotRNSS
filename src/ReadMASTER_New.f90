@@ -65,7 +65,7 @@ END DO
 
 IF (mod(mya, 2) .NE. 1) CALL terminate("EVEN MASTER # of 2-D ASY. (y)")
 
-IF (mod(nxa((mya+1)/2, iobj), 2) .NE. 1) CALL terminate("EVEN MASTER # of 2-D ASY. (x)")
+IF (mod(nxa((mya+1)/2, iobj), 2) .NE. 1) CALL terminate("EVEN MASTER # of 2-D ASY. (x)") ! Zero Asy. Power .OR. Asymmetric
 
 nya (iobj) = mya
 nxy (iobj) = sum(nxa(1:mya, iobj))

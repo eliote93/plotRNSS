@@ -304,7 +304,7 @@ END SUBROUTINE readobj
 ! --------------------------------------------------------------------------------------------------
 FUNCTION chksamepts(x1, y1, x2, y2)
 
-USE param, ONLY : TRUE, FALSE, EPS
+USE param, ONLY : TRUE, FALSE, EPS7
 
 IMPLICIT NONE
 
@@ -317,7 +317,7 @@ chksamepts = FALSE
 del = (x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2)
 del = sqrt(del)
 
-IF (del .GT. EPS) RETURN
+IF (del .GT. EPS7) RETURN
 
 chksamepts = TRUE
 ! ------------------------------------------------

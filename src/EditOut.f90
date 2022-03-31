@@ -86,7 +86,7 @@ WRITE (indev, '(A9, X, 4F6.3)')    "GCA",       gca2D(1:4)
 WRITE (indev, '(A9, X, 2F6.1)')    "yMax",      xylim
 
 IF (lerr) THEN
-  WRITE (indev, '(A9, X, A30)')    "Label",     "Normalized Asy. Power Eror (%)"
+  WRITE (indev, '(A9, X, A31)')    "Label",     "Normalized Asy. Power Error (%)"
 ELSE
   WRITE (indev, '(A9, X, A21)')    "Label",     "Normalized Asy. Power"
 END IF

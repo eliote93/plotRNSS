@@ -1,0 +1,38 @@
+$ Echo
+
+ID_01        MN / R0
+ID_02        RN / R0
+aoF2F        7.2
+plot_Err     T  2 ! Err. = plot obj - other obj
+cal_Rel      F
+tpos_2d      47 -55
+tsize_2d     20
+gcf_2d       500 100 1070 800
+gca_2d       0.11  0.035 0.76  1.05
+tpos_1d      10 0.
+tsize_1d     30
+gcf_1d       500 100 1050 730
+gca_1d       0.125 0.17 0.85 0.8
+hgt          20*4.
+xylim        2.
+zlim         1.5
+ 
+$ Rad.
+
+# of Dat.    295    21             ! Asy., Img.
+  LOGICAL      T     F     T       ! err, rel, 3d
+   String     47   -55    20       ! x, y, size
+      GCF    500   100  1070   800
+      GCA  0.110 0.035 0.760 1.050
+     yMax    2.0
+    Label Normalized Asy. Power Error (%)
+
+$ Ax.
+
+# of Dat.     20     1             ! Pln., Img.
+   String     10 0.000    30       ! x, y, size
+      GCF    500   100  1050   730
+      GCA  0.125 0.170 0.850 0.800
+     yMax  1.500
+    Label Normalized Pln. Power Eror (%)
+.
