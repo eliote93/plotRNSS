@@ -2,7 +2,7 @@ SUBROUTINE readMASTER_Old(iobj, fn)
 
 USE allocs
 USE param, ONLY : TRUE, DALLR, DOT, BLANK, oneline, probe, io1
-USE mdat,  ONLY : nxa, nya, nxy, nz, ndat, powxy, powax, pow3d, l3d, avghgt, hgt
+USE mdat,  ONLY : nxa, nya, nsfc, nxy, nz, ndat, powxy, powax, pow3d
 
 IMPLICIT NONE
 
@@ -12,7 +12,7 @@ CHARACTER(*), INTENT(IN) :: fn
 CHARACTER*100 :: gn
 
 INTEGER :: Lgh, fndndata, itmp, mya, mxy, mxy1, mxy2, iz, indev
-REAL :: totpow, rnrm, rtmp
+REAL :: rtmp
 ! ------------------------------------------------
 
 indev = io1
@@ -72,6 +72,7 @@ IF (mod(nxa((mya+1)/2, iobj), 2) .NE. 1) CALL terminate("EVEN MASTER # of 2-D AS
 nya (iobj) = mya
 nxy (iobj) = sum(nxa(1:mya, iobj))
 ndat(iobj) = nxy(iobj) * nz
+nsfc(iobj) = (mya+1)/2
 
 REWIND (indev)
 ! ------------------------------------------------
@@ -146,41 +147,6 @@ END DO
 2000 CONTINUE
 
 CLOSE (indev) ! 1
-! ------------------------------------------------
-!            03. NORM
-! ------------------------------------------------
-! 3D
-totpow = sum(pow3d(:, :, iobj))
-
-rnrm = real(ndat(iobj)) / totpow
-
-IF (.NOT. l3d) THEN
-  pow3d(:, :, iobj) = pow3d(:, :, iobj) * rnrm
-ELSE
-  DO iz = 1, nz
-    pow3d(:, iz, iobj) = pow3d(:, iz, iobj) * rnrm * avghgt / hgt(iz) ! Volume-wise Power
-  END DO
-END IF
-
-! 2D
-totpow = sum(powxy(:, iobj))
-
-rnrm = real(nxy(iobj)) / totpow
-
-powxy(:, iobj) = powxy(:, iobj) * rnrm
-
-! 1D : Already Normalized
-DO iz = 1, nz
-  powax(iz, iobj) = powax(iz, iobj) * hgt(iz) ! Point-wise to Volume-wise
-END DO
-
-totpow = sum(powax(:, iobj))
-
-rnrm = real(nz) / totpow
-
-DO iz = 1, nz
-  powax(iz, iobj) = powax(iz, iobj) * rnrm * avghgt / hgt(iz) ! Volume-wise to Point-wise
-END DO
 ! ------------------------------------------------
 
 END SUBROUTINE readMASTER_Old

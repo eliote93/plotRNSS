@@ -13,12 +13,12 @@ INTEGER :: xstr2d, ystr2d, nsize2d, xstr1d, nsize1d
 INTEGER :: gcf2d(4), gcf1d(4)
 INTEGER :: plotobj, nz
 
-INTEGER, DIMENSION(2) :: nya, nxy, ndat ! (ifile)
+INTEGER, DIMENSION(2) :: nya, nxy, ndat, nsfc ! (iobj)
 
 INTEGER, DIMENSION(100, 2)   :: nxa
 INTEGER, DIMENSION(100, 100) :: asy2Dto1D ! (ix, iy)
 
-INTEGER, DIMENSION(0:10, 100, 2) :: izp = FALSE ! (ii, iy, iobj), Zero Asy. Power, ii = 0 : # of NNZ, 1 ~ : Location of ZP
+INTEGER, DIMENSION(0:10, 100, 2) :: izp = FALSE ! (ii, iy, iobj), Zero Asy. Power, ii = 0 : # of ZP, 1 ~ : Location of ZP
 ! ------------------------------------------------
 REAL :: aoF2F, avghgt, xylim, zlim, errtotmax, errtotrms, powtotpf, erraxmax, erraxrms, powaxpf
 REAL :: ystr1d, gca2d(4), gca1d(4)

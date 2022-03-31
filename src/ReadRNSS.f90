@@ -1,8 +1,8 @@
 SUBROUTINE readRNSS(iobj, fn)
 
 USE allocs
-USE param, ONLY : TRUE, DALLR, DOT, BLANK, oneline, probe, io1, EPS7
-USE mdat,  ONLY : nxa, nya, nxy, nz, ndat, izp, powxy, powax, pow3d, l3d, avghgt, hgt
+USE param, ONLY : TRUE, DALLR, DOT, BLANK, oneline, probe, io1
+USE mdat,  ONLY : nxa, nya, nsfc, nxy, nz, ndat, izp, powxy, powax, pow3d
 
 IMPLICIT NONE
 
@@ -13,7 +13,6 @@ CHARACTER*100 :: gn
 
 INTEGER :: Lgh, fndndata, mz, itmp, mya, mxy, mxy1, mxy2, iz, indev, ist, ied, idat, jdat
 LOGICAL :: chknum
-REAL :: totpow, rnrm
 ! ------------------------------------------------
 
 indev = io1
@@ -72,7 +71,7 @@ DO
         
         IF (jdat-ist .GT. 8) THEN
           izp(0, mya, iobj) = izp(0, mya, iobj) + 1
-          izp(izp(0, mya, iobj), mya, iobj) = idat-1
+          izp(izp(0, mya, iobj), mya, iobj) = idat
         END IF
         
         ist = jdat
@@ -105,11 +104,13 @@ END DO
 1000 CONTINUE
 
 IF (mod(mya, 2) .NE. 1) CALL terminate("EVEN RNSS # of 2-D ASY. (y)")
-IF (mod(nxa((mya+1)/2, iobj) + izp(0, mya+1, iobj), 2) .NE. 1) CALL terminate("EVEN MASTER # of 2-D ASY. (x)") ! Asymmetric
 
 nya (iobj) = mya
 nxy (iobj) = sum(nxa(1:mya, iobj))
+nsfc(iobj) = (mya+1)/2
 ndat(iobj) = nxy(iobj) * nz
+
+IF (mod(nxa(nsfc(iobj), iobj) + izp(0, nsfc(iobj), iobj), 2) .NE. 1) CALL terminate("EVEN MASTER # of 2-D ASY. (x)") ! Asymmetric Zero Power at Periphery
 
 REWIND (indev)
 ! ------------------------------------------------
@@ -168,46 +169,6 @@ END DO
 2000 CONTINUE
 
 CLOSE (indev) ! 1
-! ------------------------------------------------
-!            03. NORM
-! ------------------------------------------------
-! 3D
-totpow = sum(pow3d(:, :, iobj))
-
-IF (totpow .LT. EPS7) THEN
-  pow3d(:, 1, iobj) = powxy(:, iobj)
-  totpow = sum(pow3d(:, :, iobj))
-END IF
-
-rnrm = real(ndat(iobj)) / totpow
-
-IF (.NOT. l3d) THEN
-  pow3d(:, :, iobj) = pow3d(:, :, iobj) * rnrm
-ELSE
-  DO iz = 1, nz
-    pow3d(:, iz, iobj) = pow3d(:, iz, iobj) * rnrm * avghgt / hgt(iz) ! Volume-wise Power
-  END DO
-END IF
-
-! 2D
-totpow = sum(powxy(:, iobj))
-
-rnrm = real(nxy(iobj)) / totpow
-
-powxy(:, iobj) = powxy(:, iobj) * rnrm
-
-! 1D : Already Normalized
-DO iz = 1, nz
-  powax(iz, iobj) = powax(iz, iobj) * hgt(iz) ! Point-wise to Volume-wise
-END DO
-
-totpow = sum(powax(:, iobj))
-
-rnrm = real(nz) / totpow
-
-DO iz = 1, nz
-  powax(iz, iobj) = powax(iz, iobj) * rnrm * avghgt / hgt(iz) ! Volume-wise to Point-wise
-END DO
 ! ------------------------------------------------
 
 END SUBROUTINE readRNSS

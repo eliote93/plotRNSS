@@ -10,6 +10,7 @@ fdir = 'C:\Users\user\Documents\MATLAB\'
 CALL readinp
 CALL readobj(1)
 CALL readobj(2)
+CALL normpow
 CALL chkobj
 
 CALL setgeo

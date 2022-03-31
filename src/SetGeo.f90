@@ -1,11 +1,11 @@
 SUBROUTINE setgeo
 
 USE param, ONLY : ZERO, SQ3, HALF, FILE1
-USE mdat,  ONLY : aoF2F, asy2Dto1D, nxa, nya, cntxy, izp
+USE mdat,  ONLY : aoF2F, asy2Dto1D, nxa, nya, nsfc, cntxy, izp
 
 IMPLICIT NONE
 
-INTEGER :: iax, iay, ixy, icx, icy, mxa, ny
+INTEGER :: iax, jax, iay, ixy, icx, icy, mxa, nx, ny, idat, ist, mx
 REAL :: aoPch, xx, yy, dx, dy
 ! ------------------------------------------------
 
@@ -16,56 +16,40 @@ cntxy     = ZERO
 ixy = 0
 
 DO iay = 1, nya(FILE1)
+  nx = nya(FILE1) -   abs(nsfc(FILE1) - iay)       ! Full Hex.
+  mx = nxa(iay, FILE1) + izp(0, iay, FILE1) ! Inputted
+  
+  jax = max(1, iay - nsfc(FILE1) + 1) + (nx - mx)/2 - 1
+  
   DO iax = 1, nxa(iay, FILE1)
+    jax = jax + 1
+    
+    DO idat = 1, izp(0, iay, FILE1)
+      IF (iax .EQ. izp(idat, iay, FILE1)) jax = jax + 1
+    END DO
+    
     ixy = ixy + 1
     
-    asy2Dto1D(iax, iay) = ixy
+    asy2Dto1D(jax, iay) = ixy
   END DO
 END DO
 
 ! SET : Cnt.
 aoPch = aoF2F / SQ3
 
-icy = (nya(FILE1) + 1) / 2
+dx = 0.5 * aoF2F
+dy = 1.5 * aoPch
 
 DO iay = 1, nya(FILE1)
-  yy = (icy - iay) * aoPch * 1.5
-  
-  mxa = nxa(iay, FILE1)
-  
-  SELECT CASE (mod(mxa, 2))
-  CASE (0)
-    icx = mxa / 2
+  DO iax = 1, nya(FILE1)
+    ixy = asy2Dto1D(iax, iay)
     
-    DO iax = 1, mxa
-      ixy = asy2Dto1D(iax, iay)
-      
-      cntxy(1, ixy) = (iax - icx) * aoF2F - aoF2F * HALF
-      cntxy(2, ixy) = yy
-    END DO
-  CASE (1)
-    icx = (mxa + 1) / 2
+    IF (ixy .LT. 1) CYCLE
     
-    DO iax = 1, mxa
-      ixy = asy2Dto1D(iax, iay)
-      
-      cntxy(1, ixy) = (iax - icx) * aoF2F
-      cntxy(2, ixy) = yy
-    END DO
-  END SELECT
+    cntxy(1, ixy) = aof2f * (iax - nsfc(FILE1)) - dx * (iay - nsfc(FILE1))
+    cntxy(2, ixy) =  - dy * (iay - nsfc(FILE1))
+  END DO
 END DO
-
-!dx    = 0.5 * aoF2F
-!dy    = 1.5 * aoPch
-!
-!DO iay = 1, ndim
-!  DO iax = 1, ndim
-!    ixy = asy2Dto1D(iax, iay)
-!    
-!    cntxy(1, ixy) = af2f * (iax - nrow) - dx * (iay - nrow)
-!    cntxy(2, ixy) =  -dy * (iay - nrow)
-!  END DO
-!END DO
 ! ------------------------------------------------
 
 END SUBROUTINE setgeo
