@@ -1,19 +1,20 @@
-ID_01        RN / Ref
-ID_02        RN / FDM_16
-aoF2F        14.7
-plot_Err     T  2 ! Err. = plot obj - other obj
-cal_Rel      T
-tpos_2d      100 -120
+ID_01        RN / FC_2D_Deform
+!ID_02        RN / FC_3D_2
+aoF2F        7.2
+plot_Err     F  1 ! Err. = plot obj - other obj
+cal_Rel      F
+tpos_2d      47 -55
 tsize_2d     20
-gcf_2d       500 100 1150 890
-gca_2d       0.13 0.108 0.727 0.91
-tpos_1d      10 0.
-tsize_1d     30
-gcf_1d       500 100 1050 730
-gca_1d       0.125 0.17 0.85 0.8
-hgt          1*1.
+gcf_2d       500 100 1070 800
+gca_2d       0.11 0.035 0.76 1.05
+!tpos_1d      10 0.
+!tsize_1d     30
+!gcf_1d       500 100 1050 730
+!gca_1d       0.125 0.17 0.85 0.8
+!hgt          20*4.
 xylim        2.
-zlim         1.5
+!zlim         1.5
+ptb          0. 4.156921938165306 0. 5.
 .
 
 ! 2-D

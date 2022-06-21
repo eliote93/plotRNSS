@@ -2,7 +2,7 @@ SUBROUTINE readinp
 
 USE allocs
 USE param, ONLY : DOT, BANG, BLANK, SLASH, TRUE, FALSE, ONE, MP, oneline, probe, io1
-USE mdat,  ONLY : l3d, l02, objcn, objfn, lerr, plotobj, lrel, xstr2d, ystr2d, nsize2d, xstr1d, ystr1d, nsize1d, gcf2d, gca2d, gcf1d, gca1d, nz, hgt, avghgt, xylim, zlim, aoF2F
+USE mdat,  ONLY : l3d, l02, objcn, objfn, lerr, plotobj, lrel, xstr2d, ystr2d, nsize2d, xstr1d, ystr1d, nsize1d, gcf2d, gca2d, gcf1d, gca1d, nz, hgt, avghgt, xylim, zlim, aoF2F, nptb, ptbpt
 
 IMPLICIT NONE
 
@@ -21,6 +21,7 @@ nz    = 1
 l02   = FALSE
 xylim = ONE
 zlim  = ONE
+nptb  = 0
 
 INQUIRE (FILE = fn, EXIST = lext)
 
@@ -119,6 +120,10 @@ DO
     
   CASE ('ZLIM')
     READ (oneline, *) cn, zlim
+    
+  CASE ('PTB')
+    nptb = nptb + 1
+    READ (oneline, *) cn, ptbpt(1:4, nptb)
     
   CASE DEFAULT
     CALL terminate("READ INP")
