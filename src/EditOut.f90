@@ -92,29 +92,25 @@ ELSE
 END IF
 
 ! Info. : Ax.
-IF (.NOT. l3d) THEN
-  WRITE (indev, '(A1)') DOT
-  RETURN
-END IF
-
-WRITE (indev, '(/A5/)') "$ Ax."
-
-nn = 1 ! Manually Inputted
-
-WRITE (indev, '(A9, X, 2I6, A25)')          "# of Dat.", nz, nn,                  " ! Pln., Img."
-WRITE (indev, '(A9, X, I6, F6.3, I6, A19)') "String",    xstr1d, ystr1d, nsize1d, " ! x, y, size"
-WRITE (indev, '(A9, X, 4I6)')               "GCF",       gcf1D(1:4)
-WRITE (indev, '(A9, X, 4F6.3)')             "GCA",       gca1D(1:4)
-WRITE (indev, '(A9, X, F6.3)')              "yMax",      zlim
-
-IF (lerr) THEN
-  WRITE (indev, '(A9, X, A30)')    "Label",     "Normalized Pln. Power Eror (%)"
-ELSE
-  WRITE (indev, '(A9, X, A21)')    "Label",     "Normalized Pln. Power"
+IF (l3d) THEN
+  WRITE (indev, '(/A5/)') "$ Ax."
+  
+  nn = 1 ! Manually Inputted
+  
+  WRITE (indev, '(A9, X, 2I6, A25)')          "# of Dat.", nz, nn,                  " ! Pln., Img."
+  WRITE (indev, '(A9, X, I6, F6.3, I6, A19)') "String",    xstr1d, ystr1d, nsize1d, " ! x, y, size"
+  WRITE (indev, '(A9, X, 4I6)')               "GCF",       gcf1D(1:4)
+  WRITE (indev, '(A9, X, 4F6.3)')             "GCA",       gca1D(1:4)
+  WRITE (indev, '(A9, X, F6.3)')              "yMax",      zlim
+  
+  IF (lerr) THEN
+    WRITE (indev, '(A9, X, A30)')    "Label",     "Normalized Pln. Power Eror (%)"
+  ELSE
+    WRITE (indev, '(A9, X, A21)')    "Label",     "Normalized Pln. Power"
+  END IF
 END IF
 
 WRITE (indev, '(A1)') DOT
-
 CLOSE (indev) ! 2
 ! ------------------------------------------------
 
@@ -167,18 +163,16 @@ DO ixy = 1, nxy(plotobj)
 END DO
 
 ! Ax.
-IF (.NOT. l3d) THEN
-  WRITE (indev, '(A1)') DOT
-  RETURN
+IF (l3d) THEN
+  WRITE (indev, '(/A5)') "$ Ax."
+  WRITE (indev, '(5X, A13)') "Thk."
+  
+  DO iz = 1, nz
+    WRITE (indev, '(I4, X, ES13.5)') iz, hgt(iz)
+  END DO
 END IF
 
-WRITE (indev, '(/A5)') "$ Ax."
-WRITE (indev, '(5X, A13)') "Thk."
-
-DO iz = 1, nz
-  WRITE (indev, '(I4, X, ES13.5)') iz, hgt(iz)
-END DO
-
+WRITE (indev, '(A1)') DOT
 CLOSE (indev) ! 2
 ! ------------------------------------------------
 
@@ -191,7 +185,8 @@ USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, lrel, powplnpf, err
 
 IMPLICIT NONE
 
-INTEGER :: indev, ixy, iz, ist, refobj
+INTEGER :: indev, ixy, iz, istz, istxy, iedxy, iquo, refobj
+INTEGER, PARAMETER :: NLGH = 100
 CHARACTER*100 :: locfn
 ! ------------------------------------------------
 
@@ -203,48 +198,57 @@ CALL openfile(indev, FALSE, locfn)
 WRITE (indev, '(A6/)') "$ Rad."
 
 IF (l3d) THEN
-  ist = 0
+  istz = 0
 ELSE
-  ist = 1
+  istz = 1
 END IF
 
 IF (lerr) THEN
-  WRITE (indev, '(A10, 2A13, 1000I13)') "Legend", "Max.", "RMS", (ixy, ixy = 1, nxy(plotobj))
-  
-  DO iz = ist, nz
-    WRITE (indev, '(I10, 1000ES13.5)') iz, errplnmax(iz), errplnrms(iz), (powerr(ixy, iz), ixy = 1, nxy(plotobj))
-  END DO
+  WRITE (indev, '(A10, 2A7, 1000I13)') "Legend", "Max.", "RMS", (ixy, ixy = 1, NLGH)
 ELSE
-  WRITE (indev, '(A10,  A13, 1000I13)') "Legend", "P.F.",        (ixy, ixy = 1, nxy(plotobj))
-  
-  DO iz = ist, nz
-    WRITE (indev, '(I10, 1000ES13.5)') iz, powplnpf(iz),                 (powerr(ixy, iz), ixy = 1, nxy(plotobj))
-  END DO
+  WRITE (indev, '(A10, A14, 1000I13)') "Legend", "P.F.",        (ixy, ixy = 1, NLGH)
 END IF
+  
+DO iz = istz, nz
+  IF (lerr) THEN
+    WRITE (indev, '(I10,    2F7.2)') iz, errplnmax(iz), errplnrms(iz)
+  ELSE
+    WRITE (indev, '(I10, 7X, F7.2)') iz, powplnpf(iz)
+  END IF
+  
+  iquo = 0
+  
+  DO
+    iquo  = iquo + 1
+    istxy = NLGH*(iquo-1) + 1
+    iedxy = min(NLGH*iquo, nxy(plotobj))
+    
+    IF (istxy .GT. nxy(plotobj)) EXIT
+    
+    WRITE (indev, '(24X, 1000ES13.5)') (powerr(ixy, iz), ixy = istxy, iedxy)
+  END DO
+END DO
 
 ! Ax.
-IF (.NOT. l3d) THEN
-  WRITE (indev, '(A1)') DOT
-  RETURN
-END IF
-
-WRITE (indev, '(/A5/)') "$ Ax."
-
-IF (lerr) THEN
-  WRITE (indev, '(A10, 2A13, 1000I13)') "Legend", "Max.", "RMS", (iz, iz = 1, nz)
+IF (l3d) THEN
+  WRITE (indev, '(/A5/)') "$ Ax."
   
-  WRITE (indev, '(A10, 1000ES13.5)') objcn(plotobj), erraxmax, erraxrms, (powerr(0, iz), iz = 1, nz)
-ELSE
-  WRITE (indev, '(A10,  A13, 1000I13)') "Legend", "P.F.",        (iz, iz = 1, nz)
-  WRITE (indev, '(A10, 1000ES13.5)') objcn(plotobj), powaxpf,            (powax(iz, plotobj), iz = 1, nz)
-  
-  IF (lrel) THEN
-    refobj = MP(plotobj)
+  IF (lerr) THEN
+    WRITE (indev, '(A10, 2A13, 1000I13)') "Legend", "Max.", "RMS", (iz, iz = 1, nz)
+    WRITE (indev, '(A10, 1000ES13.5)') objcn(plotobj), erraxmax, erraxrms, (powerr(0, iz), iz = 1, nz)
+  ELSE
+    WRITE (indev, '(A10,  A13, 1000I13)') "Legend", "P.F.",        (iz, iz = 1, nz)
+    WRITE (indev, '(A10, 1000ES13.5)') objcn(plotobj), powaxpf,            (powax(iz, plotobj), iz = 1, nz)
     
-    WRITE (indev, '(A10, A13, 1000ES13.5)') objcn(refobj), BLANK,        (powax(iz, refobj),  iz = 1, nz)
+    IF (lrel) THEN
+      refobj = MP(plotobj)
+      
+      WRITE (indev, '(A10, A13, 1000ES13.5)') objcn(refobj), BLANK,        (powax(iz, refobj),  iz = 1, nz)
+    END IF
   END IF
 END IF
 
+WRITE (indev, '(A1)') DOT
 CLOSE (indev) ! 2
 ! ------------------------------------------------
 
