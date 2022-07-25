@@ -1,9 +1,11 @@
 PROGRAM plotRNSS
 ! ASSUME : Only One Fuel Pin Type
 
-USE mdat, ONLY : fdir
+USE mdat, ONLY : fdir, nerr
 
 IMPLICIT NONE
+
+INTEGER :: ierr
 
 fdir = 'C:\Users\user\Documents\MATLAB\'
 
@@ -20,9 +22,15 @@ CALL plotpow
 CALL calpowerr_3D
 CALL calpowerr_int
 
-CALL printout
+DO ierr = 1, nerr
+  CALL printout(ierr)
+END DO
+
 CALL editinfo
 CALL editgrid
-CALL editout
+
+DO ierr = 1, nerr
+  CALL editout(ierr)
+END DO
 
 END PROGRAM plotRNSS

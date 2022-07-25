@@ -1,35 +1,40 @@
 ! --------------------------------------------------------------------------------------------------
-SUBROUTINE printout()
+SUBROUTINE printout(ierr)
 
+USE param, ONLY : ERRABS, ERRREL
 USE mdat, ONLY : l3d, lerr, xyztotmax, xyztotrms, powtotpf, xymax, xyrms, powplnpf, axmax, axrms, powaxpf
 
 IMPLICIT NONE
+
+INTEGER :: ierr
+CHARACTER*4 :: ctmp
 ! ------------------------------------------------
 
-IF (l3d) THEN
-  IF (lerr) THEN
-    WRITE (*, '(A31, F7.2, X, A3)') '3-D Power Error Max. : ', xyztotmax, '(%)'
-    WRITE (*, '(A31, F7.2, X, A3)') '3-D Power Error RMS  : ', xyztotrms, '(%)'
-  ELSE
-    WRITE (*, '(A27, F7.2)') '3-D Power Peaking Factor : ', powtotpf
-  END IF
-END IF
+SELECT CASE (ierr)
+CASE (ERRABS); ctmp = 'Abs.'
+CASE (ERRREL); ctmp = 'Rel.'
+END SELECT
 
 IF (lerr) THEN
-  WRITE (*, '(A31, F7.2, X, A3)') '2-D Power Error Max. : ', xymax, '(%)'
-  WRITE (*, '(A31, F7.2, X, A3)') '2-D Power Error RMS  : ', xyrms, '(%)'
+  IF (l3d) THEN
+    WRITE (*, '(A36, F7.2, X, A3)') '3-D Power ' // ctmp // ' Error Max. : ', xyztotmax(ierr), '(%)'
+    WRITE (*, '(A36, F7.2, X, A3)') '3-D Power ' // ctmp // ' Error RMS  : ', xyztotrms(ierr), '(%)'
+  END IF
+  
+  WRITE (*, '(A36, F7.2, X, A3)') '2-D Power ' // ctmp // ' Error Max. : ', xymax(ierr), '(%)'
+  WRITE (*, '(A36, F7.2, X, A3)') '2-D Power ' // ctmp // ' Error RMS  : ', xyrms(ierr), '(%)'
+  
+  IF (l3d) THEN
+    WRITE (*, '(A36, F7.2, X, A3)') '1-D Power ' // ctmp // ' Error Max. : ', axmax(ierr), '(%)'
+    WRITE (*, '(A36, F7.2, X, A3)') '1-D Power ' // ctmp // ' Error RMS  : ', axrms(ierr), '(%)'
+  END IF
 ELSE
-  WRITE (*, '(A27, F7.2)') '2-D Power Peaking Factor : ', powplnpf(0)
+  IF (l3d) WRITE (*, '(A27, F7.2)') '3-D Power Peaking Factor : ', powtotpf
+           WRITE (*, '(A27, F7.2)') '2-D Power Peaking Factor : ', powplnpf(0)
+  IF (l3d) WRITE (*, '(A27, F7.2)') '1-D Power Peaking Factor : ', powaxpf
 END IF
 
-IF (l3d) THEN
-  IF (lerr) THEN
-    WRITE (*, '(A31, F7.2, X, A3)') '1-D Power Error Max. : ', axmax, '(%)'
-    WRITE (*, '(A31, F7.2, X, A3)') '1-D Power Error RMS  : ', axrms, '(%)'
-  ELSE
-    WRITE (*, '(A27, F7.2)') '1-D Power Peaking Factor : ', powaxpf
-  END IF
-END IF
+WRITE (*,*)
 ! ------------------------------------------------
 
 END SUBROUTINE printout
@@ -37,7 +42,7 @@ END SUBROUTINE printout
 SUBROUTINE editinfo()
 
 USE param, ONLY : FALSE, DOT, io1, io2, oneline, probe
-USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, lrel, xylim, zlim, xstr2d, ystr2d, nsize2d, gcf2d, gca2d, xstr1d, ystr1d, nsize1d, gcf1d, gca1d
+USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, xylim, zlim, xstr2d, ystr2d, nsize2d, gcf2d, gca2d, xstr1d, ystr1d, nsize1d, gcf1d, gca1d
 
 IMPLICIT NONE
 
@@ -79,7 +84,7 @@ ELSE
 END IF
 
 WRITE (indev, '(A9, X, 2I6, A25)') "# of Dat.", nxy(plotobj), nn,        " ! Asy., Img."
-WRITE (indev, '(A9, X, 3L6, A21)') "LOGICAL",   lerr, lrel, l3d,         " ! err, rel, 3d"
+WRITE (indev, '(A9, X, 2L6, A27)') "LOGICAL",   lerr, l3d,               " ! err, rel, 3d"
 WRITE (indev, '(A9, X, 3I6, A19)') "String",    xstr2d, ystr2d, nsize2d, " ! x, y, size"
 WRITE (indev, '(A9, X, 4I6)')      "GCF",       gcf2D(1:4)
 WRITE (indev, '(A9, X, 4F6.3)')    "GCA",       gca2D(1:4)
@@ -178,20 +183,24 @@ CLOSE (indev) ! 2
 
 END SUBROUTINE editgrid
 ! --------------------------------------------------------------------------------------------------
-SUBROUTINE editout()
+SUBROUTINE editout(ierr)
 
-USE param, ONLY : FALSE, MP, DOT, BLANK, io2
-USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, lrel, powplnpf, xyzmax, xyzrms, powaxpf, axmax, axrms, powerr, powax
+USE param, ONLY : FALSE, MP, DOT, BLANK, ERRABS, ERRREL, io2
+USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, powplnpf, xyzmax, xyzrms, powaxpf, axmax, axrms, powerr, powax
 
 IMPLICIT NONE
 
-INTEGER :: indev, ixy, iz, istz, istxy, iedxy, iquo, refobj
+INTEGER :: indev, ixy, iz, istz, istxy, iedxy, iquo, refobj, ierr
 INTEGER, PARAMETER :: NLGH = 100
 CHARACTER*100 :: locfn
 ! ------------------------------------------------
 
+
 indev = io2
-WRITE (locfn, '(A, A4)') trim(objfn(plotobj)), '.out'
+SELECT CASE (ierr)
+CASE (ERRABS); WRITE (locfn, '(A, A8)') trim(objfn(plotobj)), '_abs.out'
+CASE (ERRREL); WRITE (locfn, '(A, A8)') trim(objfn(plotobj)), '_rel.out'
+END SELECT
 CALL openfile(indev, FALSE, locfn)
 
 ! Rad.
@@ -211,7 +220,7 @@ END IF
   
 DO iz = istz, nz
   IF (lerr) THEN
-    WRITE (indev, '(I10,    2F7.2)') iz, xyzmax(iz), xyzrms(iz)
+    WRITE (indev, '(I10,    2F7.2)') iz, xyzmax(iz, ierr), xyzrms(iz, ierr)
   ELSE
     WRITE (indev, '(I10, 7X, F7.2)') iz, powplnpf(iz)
   END IF
@@ -225,7 +234,7 @@ DO iz = istz, nz
     
     IF (istxy .GT. nxy(plotobj)) EXIT
     
-    WRITE (indev, '(24X, 1000ES13.5)') (powerr(ixy, iz), ixy = istxy, iedxy)
+    WRITE (indev, '(24X, 1000ES13.5)') (powerr(ixy, iz, ierr), ixy = istxy, iedxy)
   END DO
 END DO
 
@@ -235,16 +244,16 @@ IF (l3d) THEN
   
   IF (lerr) THEN
     WRITE (indev, '(A10, 2A13, 1000I13)') "Legend", "Max.", "RMS", (iz, iz = 1, nz)
-    WRITE (indev, '(A10, 1000ES13.5)') objcn(plotobj), axmax, axrms, (powerr(0, iz), iz = 1, nz)
+    WRITE (indev, '(A10, 1000ES13.5)') objcn(plotobj), axmax(ierr), axrms(ierr), (powerr(0, iz, ierr), iz = 1, nz)
   ELSE
     WRITE (indev, '(A10,  A13, 1000I13)') "Legend", "P.F.",        (iz, iz = 1, nz)
-    WRITE (indev, '(A10, 1000ES13.5)') objcn(plotobj), powaxpf,            (powax(iz, plotobj), iz = 1, nz)
+    WRITE (indev, '(A10, 1000ES13.5)') objcn(plotobj), powaxpf,                  (powax(iz, plotobj),  iz = 1, nz)
     
-    IF (lrel) THEN
-      refobj = MP(plotobj)
-      
-      WRITE (indev, '(A10, A13, 1000ES13.5)') objcn(refobj), BLANK,        (powax(iz, refobj),  iz = 1, nz)
-    END IF
+    !IF (lrel) THEN
+    !  refobj = MP(plotobj)
+    !  
+    !  WRITE (indev, '(A10, A13, 1000ES13.5)') objcn(refobj), BLANK,        (powax(iz, refobj),  iz = 1, nz)
+    !END IF
   END IF
 END IF
 

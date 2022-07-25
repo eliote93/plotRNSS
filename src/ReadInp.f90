@@ -2,7 +2,7 @@ SUBROUTINE readinp
 
 USE allocs
 USE param, ONLY : DOT, BANG, BLANK, SLASH, TRUE, FALSE, ONE, MP, oneline, probe, io1
-USE mdat,  ONLY : l3d, l02, objcn, objfn, lerr, plotobj, lrel, xstr2d, ystr2d, nsize2d, xstr1d, ystr1d, nsize1d, gcf2d, gca2d, gcf1d, gca1d, nz, hgt, avghgt, xylim, zlim, aoF2F, nptb, ptbpt
+USE mdat,  ONLY : l3d, l02, objcn, objfn, lerr, plotobj, xstr2d, ystr2d, nsize2d, xstr1d, ystr1d, nsize1d, gcf2d, gca2d, gcf1d, gca1d, nz, hgt, avghgt, xylim, zlim, aoF2F, nptb, ptbpt, nerr
 
 IMPLICIT NONE
 
@@ -67,9 +67,6 @@ DO
     
   CASE ('PLOT_ERR')
     READ (oneline, *) cn, lerr, plotobj
-    
-  CASE ('CAL_REL')
-    READ (oneline, *) cn, lrel
     
   CASE ('TPOS_1D')
     READ (oneline, *) cn, xstr1d, ystr1d
@@ -147,6 +144,9 @@ l3d = nz .GT. 1
 IF (.NOT. associated(hgt)) CALL dmalloc1(hgt, 1)
 
 avghgt = sum(hgt(1:nz)) / nz
+
+nerr = 1
+IF (lerr) nerr = 2
 ! ------------------------------------------------
 
 END SUBROUTINE readinp

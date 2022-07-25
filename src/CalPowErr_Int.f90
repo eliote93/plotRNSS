@@ -1,12 +1,12 @@
 SUBROUTINE calpowerr_int()
 ! INTEGRATE : 3-D into 2-D, 1-D
 
-USE param, ONLY : ZERO, MP
-USE mdat,  ONLY : lerr, l3d, lrel, plotobj, nz, nxy, ndat, nz, xyztotmax, xyztotrms, xyzmax, xyzrms, xymax, xyrms, axmax, axrms, powerr, hgt, avghgt, powxy, powax
+USE param, ONLY : ZERO, MP, ERRABS, ERRREL
+USE mdat,  ONLY : lerr, l3d, plotobj, nz, nxy, ndat, nz, xyztotmax, xyztotrms, xyzmax, xyzrms, xymax, xyrms, axmax, axrms, powerr, hgt, avghgt, powxy, powax
 
 IMPLICIT NONE
 
-INTEGER :: iz, ixy, mxy, jobj
+INTEGER :: iz, ixy, mxy, jobj, ierr
 REAL :: rnrm
 ! ------------------------------------------------
 
@@ -19,51 +19,47 @@ mxy  = nxy(plotobj)
 !            01. 2-D Err.
 ! ------------------------------------------------
 ! CAL : Err.
-IF (lrel) THEN
-  DO ixy = 1, mxy
-    powerr(ixy, 0) = 100. * (powxy(ixy, plotobj) - powxy(ixy, jobj)) / powxy(ixy, jobj)
-  END DO
-ELSE
-  DO ixy = 1, mxy
-    powerr(ixy, 0) = 100. * (powxy(ixy, plotobj) - powxy(ixy, jobj))
-  END DO
-END IF
-
-! SUMM.
-xymax = max(maxval(powerr(:, 0)), abs(minval(powerr(:, 0))))
-xyrms = ZERO
-
 DO ixy = 1, mxy
-  xyrms = xyrms + powerr(ixy, 0) * powerr(ixy, 0)
+  powerr(ixy, 0, ERRABS) = 100. * (powxy(ixy, plotobj) - powxy(ixy, jobj))
+  powerr(ixy, 0, ERRREL) = 100. * (powxy(ixy, plotobj) - powxy(ixy, jobj)) / powxy(ixy, jobj)
 END DO
 
-xyrms = sqrt(xyrms / real(mxy))
+! SUMM.
+xyrms = ZERO
 
-xyzmax(0) = xymax
-xyzrms(0) = xyrms
+DO ierr = 1, 2
+  xymax(ierr) = max(maxval(powerr(:, 0, ierr)), abs(minval(powerr(:, 0, ierr))))
+  
+  DO ixy = 1, mxy
+    xyrms(ierr) = xyrms(ierr) + powerr(ixy, 0, ierr) * powerr(ixy, 0, ierr)
+  END DO
+  
+  xyrms(ierr) = sqrt(xyrms(ierr) / real(mxy))
+  
+  xyzmax(0, ierr) = xymax(ierr)
+  xyzrms(0, ierr) = xyrms(ierr)
+END DO
 ! ------------------------------------------------
 !            03. 1-D Err.
 ! ------------------------------------------------
 ! CAL : Err.
-IF (lrel) THEN
-  DO iz = 1, nz
-    powerr(0, iz) = 100 * (powax(iz, plotobj) - powax(iz, jobj)) / powax(iz, jobj)
-  END DO
-ELSE
-  DO iz = 1, nz
-    powerr(0, iz) = 100 * (powax(iz, plotobj) - powax(iz, jobj))
-  END DO
-END IF
-
-! SUMM.
-axmax = max(maxval(powerr(0, :)), abs(minval(powerr(0, :))))
-axrms = ZERO
-
 DO iz = 1, nz
-  axrms = axrms + powerr(0, iz) * powerr(0, iz)
+  powerr(0, iz, ERRABS) = 100 * (powax(iz, plotobj) - powax(iz, jobj))
+  powerr(0, iz, ERRREL) = 100 * (powax(iz, plotobj) - powax(iz, jobj)) / powax(iz, jobj)
 END DO
 
-axrms = sqrt(axrms / real(nz))
+! SUMM.
+axrms = ZERO
+
+DO ierr = 1, 2
+  axmax(ierr) = max(maxval(powerr(0, :, ierr)), abs(minval(powerr(0, :, ierr))))
+  
+  DO iz = 1, nz
+    axrms(ierr) = axrms(ierr) + powerr(0, iz, ierr) * powerr(0, iz, ierr)
+  END DO
+  
+  axrms(ierr) = sqrt(axrms(ierr) / real(nz))
+END DO
 ! ------------------------------------------------
 
 END SUBROUTINE calpowerr_int

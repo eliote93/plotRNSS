@@ -2,7 +2,6 @@ ID_01        RN / GE_62
 ID_02        RN / GE_74_Lin._Mmt.
 aoF2F        7.2
 plot_Err     T  1 ! Err. = plot obj - other obj
-cal_Rel      F
 tpos_2d      47 -55
 tsize_2d     20
 gcf_2d       500 100 1070 800

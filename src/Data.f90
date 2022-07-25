@@ -7,11 +7,11 @@ IMPLICIT NONE
 CHARACTER*2   :: objcn(2)
 CHARACTER*100 :: fdir, objfn(2)
 
-LOGICAL :: l02, lerr, lrel, l3d
+LOGICAL :: l02, lerr, l3d
 ! ------------------------------------------------
 INTEGER :: xstr2d, ystr2d, nsize2d, xstr1d, nsize1d
 INTEGER :: gcf2d(4), gcf1d(4)
-INTEGER :: plotobj, nz, nptb
+INTEGER :: plotobj, nz, nptb, nerr
 
 INTEGER, PARAMETER :: FNXY = 600 ! Max. # of Rad. Asy.
 INTEGER, PARAMETER :: FNX  = 100 ! Max. # of Rad. Ring
@@ -26,8 +26,10 @@ INTEGER, DIMENSION(FNX, FNX) :: asy2Dto1D ! (ix, iy)
 
 INTEGER, DIMENSION(0:FNV, FNX, 2) :: izp = FALSE ! (ii, iy, iobj), ii = 0 : # of Void Asy., 1 ~ : Location of Void Asy.
 ! ------------------------------------------------
-REAL :: aoF2F, avghgt, xylim, zlim, xyztotmax, xyztotrms, powtotpf, xymax, xyrms, axmax, axrms, powaxpf
+REAL :: aoF2F, avghgt, xylim, zlim, powtotpf, powaxpf
 REAL :: ystr1d, gca2d(4), gca1d(4)
+
+REAL, DIMENSION(2) :: xyztotmax, xyztotrms, xymax, xyrms, axmax, axrms
 
 REAL, DIMENSION(      FNZ, 2) :: powax ! (iz, iobj)
 REAL, DIMENSION(     FNXY, 2) :: powxy ! (ixy, iobj)
@@ -36,13 +38,14 @@ REAL, DIMENSION(FNXY, FNZ, 2) :: pow3d ! (ixy, iz, iobj)
 REAL, DIMENSION(2, FNXY) :: cntxy ! (x/y, ixy)
 REAL, DIMENSION(4, FNP)  :: ptbpt ! (1:4, iptb), 1:2 = Org. xy vs. 3:4 = Ptb. xy
 
-REAL, POINTER, DIMENSION(:) :: xyzmax ! (iz)
-REAL, POINTER, DIMENSION(:) :: xyzrms ! (iz)
 REAL, POINTER, DIMENSION(:) :: powplnpf  ! (iz)
 REAL, POINTER, DIMENSION(:) :: hgt       ! (iz)
 
-REAL, POINTER, DIMENSION(:,:) :: powerr ! (ixy, iz)
+REAL, POINTER, DIMENSION(:,:) :: xyzmax ! (iz, ABS/REL)
+REAL, POINTER, DIMENSION(:,:) :: xyzrms ! (iz, ABS/REL)
 REAL, POINTER, DIMENSION(:,:) :: axpow  ! (iz, iobj)
+
+REAL, POINTER, DIMENSION(:,:,:) :: powerr ! (ixy, iz, ABS/REL)
 ! ------------------------------------------------
 
 END MODULE mdat
