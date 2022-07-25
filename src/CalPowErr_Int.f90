@@ -2,7 +2,7 @@ SUBROUTINE calpowerr_int()
 ! INTEGRATE : 3-D into 2-D, 1-D
 
 USE param, ONLY : ZERO, MP
-USE mdat,  ONLY : lerr, l3d, lrel, plotobj, nz, nxy, ndat, nz, errtotmax, errtotrms, errplnmax, errplnrms, erraxmax, erraxrms, powerr, hgt, avghgt, powxy, powax
+USE mdat,  ONLY : lerr, l3d, lrel, plotobj, nz, nxy, ndat, nz, xyztotmax, xyztotrms, xyzmax, xyzrms, xymax, xyrms, axmax, axrms, powerr, hgt, avghgt, powxy, powax
 
 IMPLICIT NONE
 
@@ -16,20 +16,7 @@ IF (.NOT. l3d)  RETURN
 jobj = MP (plotobj)
 mxy  = nxy(plotobj)
 ! ------------------------------------------------
-!            01. 3-D Err.
-! ------------------------------------------------
-errtotmax = maxval(errplnmax)
-errtotrms = ZERO
-
-DO iz = 1, nz
-  DO ixy = 1, mxy
-    errtotrms = errtotrms + powerr(ixy, iz) * powerr(ixy, iz)
-  END DO
-END DO
-
-errtotrms = sqrt(errtotrms / real(ndat(plotobj)))
-! ------------------------------------------------
-!            02. 2-D Err.
+!            01. 2-D Err.
 ! ------------------------------------------------
 ! CAL : Err.
 IF (lrel) THEN
@@ -43,14 +30,17 @@ ELSE
 END IF
 
 ! SUMM.
-errplnmax(0) = max(maxval(powerr(:, 0)), abs(minval(powerr(:, 0))))
-errplnrms(0) = ZERO
+xymax = max(maxval(powerr(:, 0)), abs(minval(powerr(:, 0))))
+xyrms = ZERO
 
 DO ixy = 1, mxy
-  errplnrms(0) = errplnrms(0) + powerr(ixy, 0) * powerr(ixy, 0)
+  xyrms = xyrms + powerr(ixy, 0) * powerr(ixy, 0)
 END DO
 
-errplnrms(0) = sqrt(errplnrms(0) / real(mxy))
+xyrms = sqrt(xyrms / real(mxy))
+
+xyzmax(0) = xymax
+xyzrms(0) = xyrms
 ! ------------------------------------------------
 !            03. 1-D Err.
 ! ------------------------------------------------
@@ -66,14 +56,14 @@ ELSE
 END IF
 
 ! SUMM.
-erraxmax = max(maxval(powerr(0, :)), abs(minval(powerr(0, :))))
-erraxrms = ZERO
+axmax = max(maxval(powerr(0, :)), abs(minval(powerr(0, :))))
+axrms = ZERO
 
 DO iz = 1, nz
-  erraxrms = erraxrms + powerr(0, iz) * powerr(0, iz)
+  axrms = axrms + powerr(0, iz) * powerr(0, iz)
 END DO
 
-erraxrms = sqrt(erraxrms / real(nz))
+axrms = sqrt(axrms / real(nz))
 ! ------------------------------------------------
 
 END SUBROUTINE calpowerr_int

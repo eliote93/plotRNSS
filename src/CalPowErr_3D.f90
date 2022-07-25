@@ -2,7 +2,7 @@ SUBROUTINE calpowerr_3D()
 
 USE allocs
 USE param, ONLY : ZERO, MP
-USE mdat,  ONLY : lerr, lrel, l3d, powerr, ndat, errplnmax, errplnrms, nz, nxy, avghgt, hgt, plotobj, pow3d
+USE mdat,  ONLY : lerr, lrel, l3d, powerr, ndat, xyzmax, xyzrms, xymax, xyrms, xyztotmax, xyztotrms, nz, nxy, avghgt, hgt, plotobj, pow3d
 
 IMPLICIT NONE
 
@@ -10,8 +10,8 @@ INTEGER :: iz, ixy, jobj, mxy
 REAL :: tot01, tot02, rnrm
 ! ------------------------------------------------
 
-CALL dmalloc0(errplnmax, 0, nz)
-CALL dmalloc0(errplnrms, 0, nz)
+CALL dmalloc0(xyzmax, 0, nz)
+CALL dmalloc0(xyzrms, 0, nz)
 
 IF (.NOT. lerr) RETURN
 
@@ -21,25 +21,7 @@ CALL dmalloc0(powerr, 0, mxy, 0, nz)
 
 jobj = MP(plotobj)
 ! ------------------------------------------------
-!            01. DEBUG
-! ------------------------------------------------
-! Total Sum
-!tot01 = sum(pow3d(:, :, 1))
-!tot02 = sum(pow3d(:, :, 2))
-!
-! Print 3-D Power
-!OPEN (41, FILE = 'tst.out')
-!
-!DO iz = 1, nz
-!  DO ixy = 1, nxy(2)
-!    WRITE (41, '(ES13.5)') pow3d(ixy, iz, 1)
-!  END DO
-!END DO
-!
-!CLOSE (41)
-!STOP
-! ------------------------------------------------
-!            02. CAL : Err.
+!            01. CAL : Err.
 ! ------------------------------------------------
 IF (lrel) THEN
   DO iz = 1, nz
@@ -55,21 +37,32 @@ ELSE
   END DO
 END IF
 ! ------------------------------------------------
-!            04. SUMMARIZE
+!            02. SUMM.
 ! ------------------------------------------------
 DO iz = 1, nz
-  errplnmax(iz) = max(maxval(powerr(:, iz)), abs(minval(powerr(:, iz))))
+  xyzmax(iz) = max(maxval(powerr(:, iz)), abs(minval(powerr(:, iz))))
   
   DO ixy = 1, mxy
-    errplnrms(iz) = errplnrms(iz) + powerr(ixy, iz) * powerr(ixy, iz)
+    xyzrms(iz) = xyzrms(iz) + powerr(ixy, iz) * powerr(ixy, iz)
   END DO
   
-  errplnrms(iz) = sqrt(errplnrms(iz) / real(mxy))
+  xyzrms(iz) = sqrt(xyzrms(iz) / real(mxy))
 END DO
 
 IF (.NOT. l3d) THEN
-  errplnmax(0) = errplnmax(1)
-  errplnrms(0) = errplnrms(1)
+  xymax = xyzmax(1)
+  xyrms = xyzrms(1)
+ELSE
+  xyztotmax = maxval(xyzmax)
+  xyztotrms = ZERO
+  
+  DO iz = 1, nz
+    DO ixy = 1, mxy
+      xyztotrms = xyztotrms + powerr(ixy, iz) * powerr(ixy, iz)
+    END DO
+  END DO
+  
+  xyztotrms = sqrt(xyztotrms / real(ndat(plotobj)))
 END IF
 ! ------------------------------------------------
 

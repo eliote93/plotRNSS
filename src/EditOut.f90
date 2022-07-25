@@ -1,31 +1,31 @@
 ! --------------------------------------------------------------------------------------------------
 SUBROUTINE printout()
 
-USE mdat, ONLY : l3d, lerr, errtotmax, errtotrms, powtotpf, errplnmax, errplnrms, powplnpf, erraxmax, erraxrms, powaxpf
+USE mdat, ONLY : l3d, lerr, xyztotmax, xyztotrms, powtotpf, xymax, xyrms, powplnpf, axmax, axrms, powaxpf
 
 IMPLICIT NONE
 ! ------------------------------------------------
 
 IF (l3d) THEN
   IF (lerr) THEN
-    WRITE (*, '(A31, F7.2, X, A3)') '3-D Power Error Max. : ', errtotmax, '(%)'
-    WRITE (*, '(A31, F7.2, X, A3)') '3-D Power Error RMS  : ', errtotrms, '(%)'
+    WRITE (*, '(A31, F7.2, X, A3)') '3-D Power Error Max. : ', xyztotmax, '(%)'
+    WRITE (*, '(A31, F7.2, X, A3)') '3-D Power Error RMS  : ', xyztotrms, '(%)'
   ELSE
     WRITE (*, '(A27, F7.2)') '3-D Power Peaking Factor : ', powtotpf
   END IF
 END IF
 
 IF (lerr) THEN
-  WRITE (*, '(A31, F7.2, X, A3)') '2-D Power Error Max. : ', errplnmax(0), '(%)'
-  WRITE (*, '(A31, F7.2, X, A3)') '2-D Power Error RMS  : ', errplnrms(0), '(%)'
+  WRITE (*, '(A31, F7.2, X, A3)') '2-D Power Error Max. : ', xymax, '(%)'
+  WRITE (*, '(A31, F7.2, X, A3)') '2-D Power Error RMS  : ', xyrms, '(%)'
 ELSE
   WRITE (*, '(A27, F7.2)') '2-D Power Peaking Factor : ', powplnpf(0)
 END IF
 
 IF (l3d) THEN
   IF (lerr) THEN
-    WRITE (*, '(A31, F7.2, X, A3)') '1-D Power Error Max. : ', erraxmax, '(%)'
-    WRITE (*, '(A31, F7.2, X, A3)') '1-D Power Error RMS  : ', erraxrms, '(%)'
+    WRITE (*, '(A31, F7.2, X, A3)') '1-D Power Error Max. : ', axmax, '(%)'
+    WRITE (*, '(A31, F7.2, X, A3)') '1-D Power Error RMS  : ', axrms, '(%)'
   ELSE
     WRITE (*, '(A27, F7.2)') '1-D Power Peaking Factor : ', powaxpf
   END IF
@@ -181,7 +181,7 @@ END SUBROUTINE editgrid
 SUBROUTINE editout()
 
 USE param, ONLY : FALSE, MP, DOT, BLANK, io2
-USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, lrel, powplnpf, errplnmax, errplnrms, powaxpf, erraxmax, erraxrms, powerr, powax
+USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, lrel, powplnpf, xyzmax, xyzrms, powaxpf, axmax, axrms, powerr, powax
 
 IMPLICIT NONE
 
@@ -211,7 +211,7 @@ END IF
   
 DO iz = istz, nz
   IF (lerr) THEN
-    WRITE (indev, '(I10,    2F7.2)') iz, errplnmax(iz), errplnrms(iz)
+    WRITE (indev, '(I10,    2F7.2)') iz, xyzmax(iz), xyzrms(iz)
   ELSE
     WRITE (indev, '(I10, 7X, F7.2)') iz, powplnpf(iz)
   END IF
@@ -235,7 +235,7 @@ IF (l3d) THEN
   
   IF (lerr) THEN
     WRITE (indev, '(A10, 2A13, 1000I13)') "Legend", "Max.", "RMS", (iz, iz = 1, nz)
-    WRITE (indev, '(A10, 1000ES13.5)') objcn(plotobj), erraxmax, erraxrms, (powerr(0, iz), iz = 1, nz)
+    WRITE (indev, '(A10, 1000ES13.5)') objcn(plotobj), axmax, axrms, (powerr(0, iz), iz = 1, nz)
   ELSE
     WRITE (indev, '(A10,  A13, 1000I13)') "Legend", "P.F.",        (iz, iz = 1, nz)
     WRITE (indev, '(A10, 1000ES13.5)') objcn(plotobj), powaxpf,            (powax(iz, plotobj), iz = 1, nz)
