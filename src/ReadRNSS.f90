@@ -2,7 +2,7 @@ SUBROUTINE readRNSS(iobj, fn)
 
 USE allocs
 USE param, ONLY : TRUE, DALLR, DOT, BLANK, oneline, probe, io1
-USE mdat,  ONLY : nxa, nya, nsfc, nxy, nz, ndat, izp, powxy, powax, pow3d
+USE mdat,  ONLY : nxa, nya, nsfc, nxy, nz, ndat, izp, powxy, powax, pow3d, aoF2F
 
 IMPLICIT NONE
 
@@ -27,7 +27,9 @@ CALL openfile(indev, TRUE, gn)
 !            01. READ : 1st
 ! ------------------------------------------------
 DO
-  READ (indev, '(A512)', END = 1000) oneline
+  READ (indev, '(A1000)', END = 1000) oneline
+  
+  IF (oneline(4:11) .EQ. 'grid_hex') READ(oneline(16:), *) aoF2F(iobj)
   
   !IF (probe .EQ. DOT)   EXIT ! ECHO : inp
   IF (probe .NE. DALLR) CYCLE ! READ : Only Output Card
@@ -41,7 +43,7 @@ DO
     READ (indev, *)
     
     DO
-      READ (indev, '(A512)', END = 1000) oneline
+      READ (indev, '(A1000)', END = 1000) oneline
       
       IF (fndndata(oneline) .EQ. 0) EXIT
       
@@ -88,7 +90,7 @@ DO
     READ (indev, *)
     
     DO
-      READ (indev, '(A512)', END = 1000) oneline
+      READ (indev, '(A1000)', END = 1000) oneline
       
       IF (fndndata(oneline) .EQ. 0) EXIT
       
@@ -97,7 +99,9 @@ DO
       READ (oneline, *) itmp, powax(mz, iobj)
     END DO
     
-    IF (mz .NE. nz) CALL terminate("RNSS # of PLANES")
+    IF (mz .NE. nz) THEN
+      CALL terminate("RNSS # of PLANES")
+    END IF
   END SELECT
 END DO
 
@@ -117,7 +121,7 @@ REWIND (indev)
 !            02. READ : 2nd
 ! ------------------------------------------------
 DO
-  READ (indev, '(A512)', END = 2000) oneline
+  READ (indev, '(A1000)', END = 2000) oneline
   
   !IF (probe .EQ. DOT)   EXIT ! ECHO : inp
   IF (probe .NE. DALLR) CYCLE ! READ : Only Output Card
@@ -134,7 +138,7 @@ DO
     mxy1 = 1
     
     DO
-      READ (indev, '(A512)', END = 2000) oneline
+      READ (indev, '(A1000)', END = 2000) oneline
       
       IF (fndndata(oneline) .EQ. 0) EXIT
       
@@ -148,7 +152,7 @@ DO
     
   CASE ('Power Distribution in All Region')
     DO
-      READ (indev, '(A512)') oneline
+      READ (indev, '(A1000)') oneline
       
       IF (.NOT. chknum(oneline)) CYCLE
       
@@ -157,7 +161,7 @@ DO
     END DO
     
     DO
-      READ (indev, '(A512)', END = 2000) oneline
+      READ (indev, '(A1000)', END = 2000) oneline
       
       IF (fndndata(oneline) .EQ. 0) EXIT
       

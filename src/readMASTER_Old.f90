@@ -1,8 +1,8 @@
 SUBROUTINE readMASTER_Old(iobj, fn)
 
 USE allocs
-USE param, ONLY : TRUE, DALLR, DOT, BLANK, oneline, probe, io1
-USE mdat,  ONLY : nxa, nya, nsfc, nxy, nz, ndat, powxy, powax, pow3d
+USE param, ONLY : TRUE, DALLR, DOT, BLANK, oneline, probe, io1, SQ3
+USE mdat,  ONLY : nxa, nya, nsfc, nxy, nz, ndat, powxy, powax, pow3d, aoF2F
 
 IMPLICIT NONE
 
@@ -24,7 +24,13 @@ CALL openfile(indev, TRUE, gn)
 !            01. READ : 1st
 ! ------------------------------------------------
 DO
-  READ (indev, '(A512)', END = 1000) oneline
+  READ (indev, '(A1000)', END = 1000) oneline
+  
+  IF (oneline(2:9) .EQ. '%GEN_GEO') THEN
+    READ (indev, '(A1000)', END = 1000) oneline
+    READ(oneline, *) aoF2F(iobj)
+    aoF2F(iobj) = aoF2F(iobj) * SQ3
+  END IF
   
   Lgh = len_trim(oneline)
   
@@ -37,7 +43,7 @@ DO
     END DO
     
     DO
-      READ (indev, '(A512)', END = 1000) oneline
+      READ (indev, '(A1000)', END = 1000) oneline
       
       IF (fndndata(oneline) .EQ. 0) EXIT
       
@@ -56,7 +62,7 @@ DO
     END DO
     
     DO iz = 1, nz
-      READ (indev, '(A512)', END = 1000) oneline
+      READ (indev, '(A1000)', END = 1000) oneline
       
       READ (oneline, *) itmp, rtmp, powax(nz - iz + 1, iobj) ! NOTICE : Reverse
     END DO
@@ -79,7 +85,7 @@ REWIND (indev)
 !            02. READ : 2nd
 ! ------------------------------------------------
 DO
-  READ (indev, '(A512)', END = 2000) oneline
+  READ (indev, '(A1000)', END = 2000) oneline
   
   Lgh = len_trim(oneline)
   
@@ -95,7 +101,7 @@ DO
     mxy1 = 1
     
     DO
-      READ (indev, '(A512)', END = 2000) oneline
+      READ (indev, '(A1000)', END = 2000) oneline
       
       IF (fndndata(oneline) .EQ. 0) EXIT
       
@@ -125,7 +131,7 @@ DO
       END DO
       
       DO
-        READ (indev, '(A512)', END = 2000) oneline
+        READ (indev, '(A1000)', END = 2000) oneline
         
         IF (fndndata(oneline) .EQ. 0) EXIT
         

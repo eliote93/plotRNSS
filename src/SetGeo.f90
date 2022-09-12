@@ -35,9 +35,9 @@ DO iay = 1, nya(FILE1)
 END DO
 
 ! SET : Cnt.
-aoPch = aoF2F / SQ3
+aoPch = aoF2F(1) / SQ3
 
-dx = 0.5 * aoF2F
+dx = 0.5 * aoF2F(1)
 dy = 1.5 * aoPch
 
 DO iay = 1, nya(FILE1)
@@ -46,8 +46,8 @@ DO iay = 1, nya(FILE1)
     
     IF (ixy .LT. 1) CYCLE
     
-    cntxy(1, ixy) = aof2f * (iax - nsfc(FILE1)) - dx * (iay - nsfc(FILE1))
-    cntxy(2, ixy) =  - dy * (iay - nsfc(FILE1))
+    cntxy(1, ixy) = aof2f(1) * (iax - nsfc(FILE1)) - dx * (iay - nsfc(FILE1))
+    cntxy(2, ixy) =     - dy * (iay - nsfc(FILE1))
   END DO
 END DO
 ! ------------------------------------------------

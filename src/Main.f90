@@ -22,14 +22,11 @@ CALL plotpow
 CALL calpowerr_3D
 CALL calpowerr_int
 
-DO ierr = 1, nerr
-  CALL printout(ierr)
-END DO
-
 CALL editinfo
 CALL editgrid
 
 DO ierr = 1, nerr
+  CALL printout(ierr)
   CALL editout(ierr)
 END DO
 

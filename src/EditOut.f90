@@ -2,7 +2,7 @@
 SUBROUTINE printout(ierr)
 
 USE param, ONLY : ERRABS, ERRREL
-USE mdat, ONLY : l3d, lerr, xyztotmax, xyztotrms, powtotpf, xymax, xyrms, powplnpf, axmax, axrms, powaxpf
+USE mdat, ONLY : l3d, lerr, xyztotmax, xyztotrms, xyztotpf, xymax, xyrms, xyzpf, axmax, axrms, axpf
 
 IMPLICIT NONE
 
@@ -29,9 +29,9 @@ IF (lerr) THEN
     WRITE (*, '(A36, F7.2, X, A3)') '1-D Power ' // ctmp // ' Error RMS  : ', axrms(ierr), '(%)'
   END IF
 ELSE
-  IF (l3d) WRITE (*, '(A27, F7.2)') '3-D Power Peaking Factor : ', powtotpf
-           WRITE (*, '(A27, F7.2)') '2-D Power Peaking Factor : ', powplnpf(0)
-  IF (l3d) WRITE (*, '(A27, F7.2)') '1-D Power Peaking Factor : ', powaxpf
+  IF (l3d) WRITE (*, '(A27, F7.2)') '3-D Power Peaking Factor : ', xyztotpf
+           WRITE (*, '(A27, F7.2)') '2-D Power Peaking Factor : ', xyzpf(0)
+  IF (l3d) WRITE (*, '(A27, F7.2)') '1-D Power Peaking Factor : ', axpf
 END IF
 
 WRITE (*,*)
@@ -62,7 +62,7 @@ CALL openfile(indev, FALSE, locfn)
 WRITE (indev, '(A6/)') "$ Echo"
 
 DO
-  READ  (jndev, '(A512)') oneline
+  READ  (jndev, '(A1000)') oneline
   WRITE (indev, '(A)') trim(oneline)
   
   IF (probe .NE. DOT) CYCLE
@@ -147,8 +147,8 @@ WRITE (indev, '(5X, 12A13)') (("NW", "SW", "SS", "SE", "NE", "NN"), ixy = 1, 2)
 x0 = [-HALF, -HALF, ZERO,  HALF, HALF, ZERO]
 y0 = [ HALF, -HALF, -ONE, -HALF, HALF,  ONE]
 
-aoPch = aoF2F / SQ3
-x0    = x0 * aoF2F
+aoPch = aoF2F(1) / SQ3
+x0    = x0 * aoF2F(1)
 y0    = y0 * aoPch
 
 DO ixy = 1, nxy(plotobj)
@@ -186,7 +186,7 @@ END SUBROUTINE editgrid
 SUBROUTINE editout(ierr)
 
 USE param, ONLY : FALSE, MP, DOT, BLANK, ERRABS, ERRREL, io2
-USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, powplnpf, xyzmax, xyzrms, powaxpf, axmax, axrms, powerr, powax
+USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, xyzpf, xyzmax, xyzrms, axpf, axmax, axrms, powerr, powax
 
 IMPLICIT NONE
 
@@ -222,7 +222,7 @@ DO iz = istz, nz
   IF (lerr) THEN
     WRITE (indev, '(I10,    2F7.2)') iz, xyzmax(iz, ierr), xyzrms(iz, ierr)
   ELSE
-    WRITE (indev, '(I10, 7X, F7.2)') iz, powplnpf(iz)
+    WRITE (indev, '(I10, 7X, F7.2)') iz, xyzpf(iz)
   END IF
   
   iquo = 0
@@ -247,7 +247,7 @@ IF (l3d) THEN
     WRITE (indev, '(A10, 1000ES13.5)') objcn(plotobj), axmax(ierr), axrms(ierr), (powerr(0, iz, ierr), iz = 1, nz)
   ELSE
     WRITE (indev, '(A10,  A13, 1000I13)') "Legend", "P.F.",        (iz, iz = 1, nz)
-    WRITE (indev, '(A10, 1000ES13.5)') objcn(plotobj), powaxpf,                  (powax(iz, plotobj),  iz = 1, nz)
+    WRITE (indev, '(A10, 1000ES13.5)') objcn(plotobj), axpf,                  (powax(iz, plotobj),  iz = 1, nz)
     
     !IF (lrel) THEN
     !  refobj = MP(plotobj)

@@ -161,7 +161,7 @@ LOGICAL :: led
 led = TRUE
 
 DO
-  READ (indev, '(A512)', END = 1000) oneline
+  READ (indev, '(A1000)', END = 1000) oneline
   
   oneline = trim(oneline)
   

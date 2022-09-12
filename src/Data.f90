@@ -26,7 +26,7 @@ INTEGER, DIMENSION(FNX, FNX) :: asy2Dto1D ! (ix, iy)
 
 INTEGER, DIMENSION(0:FNV, FNX, 2) :: izp = FALSE ! (ii, iy, iobj), ii = 0 : # of Void Asy., 1 ~ : Location of Void Asy.
 ! ------------------------------------------------
-REAL :: aoF2F, avghgt, xylim, zlim, powtotpf, powaxpf
+REAL :: aoF2F(2), avghgt, xylim, zlim, xyztotpf, axpf
 REAL :: ystr1d, gca2d(4), gca1d(4)
 
 REAL, DIMENSION(2) :: xyztotmax, xyztotrms, xymax, xyrms, axmax, axrms
@@ -38,7 +38,7 @@ REAL, DIMENSION(FNXY, FNZ, 2) :: pow3d ! (ixy, iz, iobj)
 REAL, DIMENSION(2, FNXY) :: cntxy ! (x/y, ixy)
 REAL, DIMENSION(4, FNP)  :: ptbpt ! (1:4, iptb), 1:2 = Org. xy vs. 3:4 = Ptb. xy
 
-REAL, POINTER, DIMENSION(:) :: powplnpf  ! (iz)
+REAL, POINTER, DIMENSION(:) :: xyzpf  ! (iz)
 REAL, POINTER, DIMENSION(:) :: hgt       ! (iz)
 
 REAL, POINTER, DIMENSION(:,:) :: xyzmax ! (iz, ABS/REL)

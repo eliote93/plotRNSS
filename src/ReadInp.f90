@@ -1,7 +1,7 @@
 SUBROUTINE readinp
 
 USE allocs
-USE param, ONLY : DOT, BANG, BLANK, SLASH, TRUE, FALSE, ONE, MP, oneline, probe, io1
+USE param, ONLY : DOT, BANG, BLANK, SLASH, TRUE, FALSE, ONE, MP, oneline, probe, io1, ZERO
 USE mdat,  ONLY : l3d, l02, objcn, objfn, lerr, plotobj, xstr2d, ystr2d, nsize2d, xstr1d, ystr1d, nsize1d, gcf2d, gca2d, gcf1d, gca1d, nz, hgt, avghgt, xylim, zlim, aoF2F, nptb, ptbpt, nerr
 
 IMPLICIT NONE
@@ -22,6 +22,7 @@ l02   = FALSE
 xylim = ONE
 zlim  = ONE
 nptb  = 0
+aoF2F = ZERO
 
 INQUIRE (FILE = fn, EXIST = lext)
 
@@ -30,7 +31,7 @@ IF (.NOT.lext) CALL terminate("FILE DOES NOT EXIST - " // fn)
 OPEN (indev, FILE = fn)
 
 DO
-  READ (indev, '(A512)', END = 1000) oneline
+  READ (indev, '(A1000)', END = 1000) oneline
   
   IF (probe .EQ. DOT)   EXIT
   IF (probe .EQ. BANG)  CYCLE
@@ -62,11 +63,11 @@ DO
     
     CALL rmvremainder(objfn(2))
     
-  CASE ('AOF2F')
-    READ (oneline, *) cn, aoF2F
-    
   CASE ('PLOT_ERR')
     READ (oneline, *) cn, lerr, plotobj
+    
+  CASE ('BENCH')
+    CALL readbench(oneline)
     
   CASE ('TPOS_1D')
     READ (oneline, *) cn, xstr1d, ystr1d
