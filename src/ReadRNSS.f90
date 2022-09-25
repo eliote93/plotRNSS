@@ -2,7 +2,7 @@ SUBROUTINE readRNSS(iobj, fn)
 
 USE allocs
 USE param, ONLY : TRUE, DALLR, DOT, BLANK, oneline, probe, io1
-USE mdat,  ONLY : nxa, nya, nsfc, nxy, nz, ndat, izp, powxy, powax, pow3d, aoF2F
+USE mdat,  ONLY : nxa, nya, nsfc, nxy, nz, ndat, izp, powxy, powax, pow3d, aoF2F, keff
 
 IMPLICIT NONE
 
@@ -29,7 +29,8 @@ CALL openfile(indev, TRUE, gn)
 DO
   READ (indev, '(A1000)', END = 1000) oneline
   
-  IF (oneline(4:11) .EQ. 'grid_hex') READ(oneline(16:), *) aoF2F(iobj)
+  IF (oneline( 4:11) .EQ. 'grid_hex') READ(oneline(16:), *) aoF2F(iobj)
+  IF (oneline(11:15) .EQ. 'K-eff')    READ(oneline(18:), *) keff(iobj)
   
   !IF (probe .EQ. DOT)   EXIT ! ECHO : inp
   IF (probe .NE. DALLR) CYCLE ! READ : Only Output Card

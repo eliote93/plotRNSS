@@ -29,7 +29,7 @@ INTEGER, DIMENSION(0:FNV, FNX, 2) :: izp = FALSE ! (ii, iy, iobj), ii = 0 : # of
 REAL :: aoF2F(2), avghgt, xylim, zlim, xyztotpf, axpf
 REAL :: ystr1d, gca2d(4), gca1d(4)
 
-REAL, DIMENSION(2) :: xyztotmax, xyztotrms, xymax, xyrms, axmax, axrms
+REAL, DIMENSION(2) :: xyztotmax, xyztotrms, xymax, xyrms, axmax, axrms, keff
 
 REAL, DIMENSION(      FNZ, 2) :: powax ! (iz, iobj)
 REAL, DIMENSION(     FNXY, 2) :: powxy ! (ixy, iobj)

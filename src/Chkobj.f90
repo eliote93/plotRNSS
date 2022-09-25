@@ -1,7 +1,7 @@
 SUBROUTINE chkobj()
 
-USE param, ONLY : EPS7
-USE mdat,  ONLY : lerr, nxa, nya, nxy, plotobj, izp, aoF2F
+USE param, ONLY : EPS7, MP
+USE mdat,  ONLY : lerr, nxa, nya, nxy, plotobj, izp, aoF2F, keff
 
 IMPLICIT NONE
 
@@ -24,6 +24,12 @@ DO iya = 1, nya(1)
 END DO
 
 IF (nxy(plotobj) .GT. 10000) CALL terminate("TOO MANY ASY.")
+
+!IF (keff(1) .LT. EPS) CALL terminate("K-EFF")
+!IF (keff(2) .LT. EPS) CALL terminate("K-EFF")
+WRITE (*, '(18X, A18, F7.5)')       'Reference k-eff : ',       keff(MP(plotobj))
+WRITE (*, '(18X, A18, F7.5)')       'Test      k-eff : ',       keff(plotobj)
+WRITE (*, '(12X, A24, I5, X, A5/)') 'Reactivity Difference : ', int(100000.*(1./keff(MP(plotobj)) - 1./keff(plotobj))), '(pcm)'
 ! ------------------------------------------------
 
 END SUBROUTINE chkobj
