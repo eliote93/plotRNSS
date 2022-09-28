@@ -1,10 +1,10 @@
-ID_01        RN / TPEN
-ID_02        RN / FDM nDiv 5
+ID_01        RN / TST 0
+ID_02        RN / TST 1
 plot_Err     T  2 ! Err. = plot obj - other obj
 xylim        2.
 zlim         1.5
 
-bench        RAD_BCN_ERR
+bench        RAD_V4_CHAO95_ERR
 !tpos_2d      47 -55
 !tsize_2d     20
 !gcf_2d       500 100 1070 800
