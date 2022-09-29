@@ -324,3 +324,39 @@ chksamepts = TRUE
 
 END FUNCTION chksamepts
 ! --------------------------------------------------------------------------------------------------
+!                                   12. IF : numeric
+! --------------------------------------------------------------------------------------------------
+FUNCTION ifnumeric(aline)
+
+USE param, ONLY : BLANK, TRUE, FALSE, MXNCOL
+
+IMPLICIT NONE
+
+CHARACTER   :: aline*(*)
+CHARACTER*1 :: scline(MXNCOL)
+LOGICAL     :: ifnumeric
+
+INTEGER :: icol, iascii
+! ------------------------------------------------
+
+ifnumeric = FALSE
+scline    = aline
+
+DO icol = 1, len_trim(aline)
+  scline(icol) = aline(icol:icol)
+END DO
+
+DO icol = 1, MXNCOL
+  iascii = ichar(scline(icol))
+  
+   ! DETERMINE : if the first character is numeric
+  IF (scline(icol).NE.BLANK .AND. iascii.NE.9) THEN
+    IF ((iascii-48)*(iascii-57) .LE. 0) ifnumeric = TRUE
+    
+    RETURN
+  END IF
+END DO
+! ------------------------------------------------
+
+END FUNCTION ifnumeric
+! --------------------------------------------------------------------------------------------------

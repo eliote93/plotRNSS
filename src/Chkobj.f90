@@ -1,12 +1,15 @@
 SUBROUTINE chkobj()
 
 USE param, ONLY : EPS7, MP
-USE mdat,  ONLY : lerr, nxa, nya, nxy, plotobj, izp, aoF2F, keff
+USE mdat,  ONLY : lerr, ldfrm, l3d, nxa, nya, nxy, plotobj, izp, aoF2F, keff, ndfrm
 
 IMPLICIT NONE
 
 INTEGER :: iya, idat
 ! ------------------------------------------------
+
+ldfrm = ndfrm(plotobj) .GT. 0
+IF (l3d .AND. ldfrm) CALL terminate("3D DEFORMATION IS NOT DEVELOPED SO FAR")
 
 IF (aoF2F(1) .LT. EPS7)  CALL terminate("AOF2F IS NOT INPUTTED")
 

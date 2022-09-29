@@ -1,5 +1,5 @@
-ID_01        RN / TST 0
-ID_02        RN / TST 1
+ID_01        RN / TST 1
+ID_02        RN / TST 2
 plot_Err     T  2 ! Err. = plot obj - other obj
 xylim        2.
 zlim         1.5

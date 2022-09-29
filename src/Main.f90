@@ -9,6 +9,7 @@ INTEGER :: ierr
 
 fdir = 'C:\Users\user\Documents\MATLAB\'
 
+CALL default
 CALL readinp
 CALL readobj(1)
 CALL readobj(2)
@@ -16,6 +17,7 @@ CALL normpow
 CALL chkobj
 
 CALL setgeo
+CALL setdfrm
 
 CALL plotpow
 

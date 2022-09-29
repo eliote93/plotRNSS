@@ -124,11 +124,11 @@ END SUBROUTINE editinfo
 SUBROUTINE editgrid()
 
 USE param, ONLY : FALSE, HALF, ONE, ZERO, SQ3, DOT, io2
-USE mdat,  ONLY : l3d, nxy, nz, objfn, plotobj, aoF2F, hgt, cntxy, nptb, ptbpt
+USE mdat,  ONLY : l3d, nxy, nz, objfn, plotobj, aoF2F, hgt, cntxy, lptb, optb
 
 IMPLICIT NONE
 
-INTEGER :: indev, ixy, iz, iptb, ipt
+INTEGER :: indev, ixy, iz, iptb, ipt, irdir
 LOGICAL :: chksamepts
 REAL :: aoPch
 REAL, DIMENSION(6) :: x0, y0, x1, y1
@@ -142,10 +142,10 @@ CALL openfile(indev, FALSE, locfn)
 ! Rad.
 WRITE (indev, '(A6)') "$ Rad."
 WRITE (indev, '(5X, 2A78)') "x", "y"
-WRITE (indev, '(5X, 12A13)') (("NW", "SW", "SS", "SE", "NE", "NN"), ixy = 1, 2)
+WRITE (indev, '(5X, 12A13)') (("SW", "NW", "NN", "NE", "SE", "SS"), ixy = 1, 2)
 
-x0 = [-HALF, -HALF, ZERO,  HALF, HALF, ZERO]
-y0 = [ HALF, -HALF, -ONE, -HALF, HALF,  ONE]
+x0 = [-HALF, -HALF, ZERO,  HALF,  HALF, ZERO]
+y0 = [-HALF,  HALF,  ONE,  HALF, -HALF, -ONE]
 
 aoPch = aoF2F(1) / SQ3
 x0    = x0 * aoF2F(1)
@@ -155,14 +155,13 @@ DO ixy = 1, nxy(plotobj)
   x1 = x0 + cntxy(1, ixy)
   y1 = y0 + cntxy(2, ixy)
   
-  DO ipt = 1, 6
-    DO iptb = 1, nptb
-      IF (.NOT. chksamepts(x1(ipt), y1(ipt), ptbpt(1, iptb), ptbpt(2, iptb))) CYCLE
-      
-      x1(ipt) = ptbpt(3, iptb)
-      y1(ipt) = ptbpt(4, iptb)
+  IF (lptb(ixy)) THEN
+    DO iptb = 1, optb(ixy)%nptb
+      irdir = optb(ixy)%irdir(iptb)
+      x1(irdir) = x1(irdir) + optb(ixy)%dx(iptb)
+      y1(irdir) = y1(irdir) + optb(ixy)%dy(iptb)
     END DO
-  END DO
+  END IF
   
   WRITE (indev, '(I4, X, 12ES13.5)') ixy, x1, y1
 END DO

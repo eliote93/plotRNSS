@@ -2,7 +2,7 @@ SUBROUTINE readinp
 
 USE allocs
 USE param, ONLY : DOT, BANG, BLANK, SLASH, TRUE, FALSE, ONE, MP, oneline, probe, io1, ZERO
-USE mdat,  ONLY : l3d, l02, objcn, objfn, lerr, plotobj, xstr2d, ystr2d, nsize2d, xstr1d, ystr1d, nsize1d, gcf2d, gca2d, gcf1d, gca1d, nz, hgt, avghgt, xylim, zlim, aoF2F, nptb, ptbpt, nerr
+USE mdat,  ONLY : l3d, l02, objcn, objfn, lerr, plotobj, xstr2d, ystr2d, nsize2d, xstr1d, ystr1d, nsize1d, gcf2d, gca2d, gcf1d, gca1d, nz, hgt, avghgt, xylim, zlim, aoF2F, nerr
 
 IMPLICIT NONE
 
@@ -17,22 +17,14 @@ CHARACTER*30, DIMENSION(100) :: tmp1
 
 fn    = 'plotRNSS.inp'
 indev = io1
-nz    = 1
-l02   = FALSE
-xylim = ONE
-zlim  = ONE
-nptb  = 0
-aoF2F = ZERO
 
 INQUIRE (FILE = fn, EXIST = lext)
-
 IF (.NOT.lext) CALL terminate("FILE DOES NOT EXIST - " // fn)
 
 OPEN (indev, FILE = fn)
 
 DO
   READ (indev, '(A1000)', END = 1000) oneline
-  
   IF (probe .EQ. DOT)   EXIT
   IF (probe .EQ. BANG)  CYCLE
   IF (probe .EQ. BLANK) CYCLE
@@ -56,7 +48,6 @@ DO
     l02 = TRUE
     
     READ  (oneline, *) cn, objcn(2)
-    
     CALL fndchr(oneline, ipos, nchr, SLASH)
     
     objfn(2) = oneline(ipos(1)+1:lgh)
@@ -118,11 +109,7 @@ DO
     
   CASE ('ZLIM')
     READ (oneline, *) cn, zlim
-    
-  CASE ('PTB')
-    nptb = nptb + 1
-    READ (oneline, *) cn, ptbpt(1:4, nptb)
-    
+        
   CASE DEFAULT
     CALL terminate("READ INP")
   END SELECT
@@ -136,7 +123,6 @@ CLOSE (indev) ! 1
 
 ! CHK : plot mod
 IF (.NOT.l02 .AND. plotobj.EQ.2) CALL terminate("WRONG PLOTTING OBJECT")
-
 IF (lerr .AND. objcn(plotobj).EQ.'MC' .AND. objcn(MP(plotobj)).EQ.'NT') CALL terminate("WRONG PLOTTING OBJECT")
 
 ! Basic
