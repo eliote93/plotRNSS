@@ -1,10 +1,9 @@
-ID_01        RN / TST 1
-ID_02        RN / TST 2
-plot_Err     T  2 ! Err. = plot obj - other obj
+ID_01        RN / Ref
+plot_Err     F  1 ! Err. = plot obj - other obj
 xylim        2.
 zlim         1.5
 
-bench        RAD_V4_CHAO95_ERR
+bench        RAD_V4_CHAO95_POW
 !tpos_2d      47 -55
 !tsize_2d     20
 !gcf_2d       500 100 1070 800
@@ -20,26 +19,7 @@ bench        RAD_V4_CHAO95_ERR
 !ptb          0. 4.156921938165306 0. 5.
 .
 
-! RAD
 ! BCN : ERR/POW
-! PGFSR : ERR/POW
+! PGSFR : ERR/POW
 ! V4 CHAO95 : ERR/POW
-
-! 1-D
-! xstr ystr / nsize / gcf / gca
-
-  10  0.  / 30 / 500  100 1050 730 / 0.125 0.17  0.85  0.8  ! Boiler Core, Err
-  10  0.2 / 30 / 500  100 1050 730 / 0.11  0.16  0.86  0.82 ! Boiler Core, Pow
-  10  0.  / 30 / 500  100 1050 730 / 0.125 0.17  0.85  0.8  ! PGFSR, Err
-  10  0.2 / 30 / 500  100 1050 730 / 0.11  0.16  0.86  0.82 ! pgfsr, Pow
-
-! Hgt
-
-hgt          2*4. 8*8. 2*4.             ! Boiler Core Old
-hgt          20*4.                      ! Boiler Core New
-hgt          10*7.252  8.  8.867  8.433 ! PGFSR
-
-! zlim
-
-zlim         0.5 ! Err.
-zlim         1.5 ! Pow. NTH
+! SNR300 : ERR/POW

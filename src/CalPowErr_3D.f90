@@ -2,11 +2,11 @@ SUBROUTINE calpowerr_3D()
 
 USE allocs
 USE param, ONLY : ZERO, MP, ERRABS, ERRREL
-USE mdat,  ONLY : lerr, l3d, powerr, ndat, xyzmax, xyzrms, xymax, xyrms, xyztotmax, xyztotrms, nz, nxy, avghgt, hgt, plotobj, pow3d
+USE mdat,  ONLY : lerr, l3d, powerr, ndat, xyzmax, xyzrms, xymax, xyrms, xyztotmax, xyztotrms, nz, nxy, avghgt, hgt, plotobj, pow3d, lptb
 
 IMPLICIT NONE
 
-INTEGER :: iz, ixy, jobj, mxy, ierr
+INTEGER :: iz, ixy, jobj, mxy, ierr, nintact
 REAL :: tot01, tot02, rnrm
 ! ------------------------------------------------
 
@@ -43,6 +43,20 @@ DO ierr = 1, 2
     END DO
     
     xyzrms(iz, ierr) = sqrt(xyzrms(iz, ierr) / real(mxy))
+    
+    ! DEBUG : Exclude Deformed Asy.
+    !xyzmax(iz, ierr) = ZERO
+    !nintact = 0
+    !
+    !DO ixy = 1, mxy
+    !  IF (lptb(ixy)) CYCLE
+    !  nintact = nintact + 1
+    !  
+    !  xyzmax(iz, ierr) = max(xyzmax(iz, ierr), abs(powerr(ixy, iz, ierr)))
+    !  xyzrms(iz, ierr) = xyzrms(iz, ierr) + powerr(ixy, iz, ierr)*powerr(ixy, iz, ierr)
+    !END DO
+    !
+    !xyzrms(iz, ierr) = sqrt(xyzrms(iz, ierr) / real(nintact))
   END DO
   
   IF (.NOT. l3d) THEN
