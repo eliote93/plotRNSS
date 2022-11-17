@@ -1,7 +1,7 @@
 SUBROUTINE chkobj()
 
 USE param, ONLY : EPS7, MP
-USE mdat,  ONLY : lerr, ldfrm, l3d, nxa, nya, nxy, plotobj, izp, aoF2F, keff, ndfrm
+USE mdat,  ONLY : lerr, ldfrm, l3d, nxa, nya, nxy, plotobj, izp, aoF2F, keff, ndfrm, drho, iedterr
 
 IMPLICIT NONE
 
@@ -30,9 +30,20 @@ IF (nxy(plotobj) .GT. 10000) CALL terminate("TOO MANY ASY.")
 
 !IF (keff(1) .LT. EPS) CALL terminate("K-EFF")
 !IF (keff(2) .LT. EPS) CALL terminate("K-EFF")
-WRITE (*, '(18X, A18, F7.5)')       'Reference k-eff : ',       keff(MP(plotobj))
-WRITE (*, '(18X, A18, F7.5)')       'Test      k-eff : ',       keff(plotobj)
-WRITE (*, '(12X, A24, I5, X, A5/)') 'Reactivity Difference : ', int(100000.*(1./keff(MP(plotobj)) - 1./keff(plotobj))), '(pcm)'
+
+IF (iedterr .EQ. 2) THEN
+  drho = int(keff(plotobj) - keff(MP(plotobj)))
+  WRITE (*, '(18X, A17, I5)')       'Reference drho : ',    int(keff(MP(plotobj)))
+  WRITE (*, '(18X, A17, I5)')       'Test      drho : ',    int(keff(plotobj))
+  WRITE (*, '(12X, A18, I5, X, A5/)') 'drho Difference : ', drho, '(pcm)'
+ELSE
+  drho = int(100000.*(1./keff(MP(plotobj)) - 1./keff(plotobj)))
+  WRITE (*, '(18X, A18, F7.5)')       'Reference k-eff : ',       keff(MP(plotobj))
+  WRITE (*, '(18X, A18, F7.5)')       'Test      k-eff : ',       keff(plotobj)
+  WRITE (*, '(12X, A24, I5, X, A5/)') 'Reactivity Difference : ', drho, '(pcm)'
+END IF
+
+
 ! ------------------------------------------------
 
 END SUBROUTINE chkobj

@@ -20,8 +20,8 @@ mxy  = nxy(plotobj)
 ! ------------------------------------------------
 ! CAL : Err.
 DO ixy = 1, mxy
-  powerr(ixy, 0, ERRABS) = 100. * (powxy(ixy, plotobj) - powxy(ixy, jobj))
-  powerr(ixy, 0, ERRREL) = 100. * (powxy(ixy, plotobj) - powxy(ixy, jobj)) / powxy(ixy, jobj)
+  powerr(ixy, 0, ERRABS) = 100.*(powxy(ixy, plotobj) - powxy(ixy, jobj))
+  powerr(ixy, 0, ERRREL) = 100.*(powxy(ixy, plotobj) - powxy(ixy, jobj)) / powxy(ixy, jobj)
 END DO
 
 ! SUMM.
@@ -31,7 +31,7 @@ DO ierr = 1, 2
   xymax(ierr) = max(maxval(powerr(:, 0, ierr)), abs(minval(powerr(:, 0, ierr))))
   
   DO ixy = 1, mxy
-    xyrms(ierr) = xyrms(ierr) + powerr(ixy, 0, ierr) * powerr(ixy, 0, ierr)
+    xyrms(ierr) = xyrms(ierr) + powerr(ixy, 0, ierr)*powerr(ixy, 0, ierr)
   END DO
   
   xyrms(ierr) = sqrt(xyrms(ierr) / real(mxy))
@@ -44,8 +44,8 @@ END DO
 ! ------------------------------------------------
 ! CAL : Err.
 DO iz = 1, nz
-  powerr(0, iz, ERRABS) = 100 * (powax(iz, plotobj) - powax(iz, jobj))
-  powerr(0, iz, ERRREL) = 100 * (powax(iz, plotobj) - powax(iz, jobj)) / powax(iz, jobj)
+  powerr(0, iz, ERRABS) = 100*(powax(iz, plotobj) - powax(iz, jobj))
+  powerr(0, iz, ERRREL) = 100*(powax(iz, plotobj) - powax(iz, jobj)) / powax(iz, jobj)
 END DO
 
 ! SUMM.
@@ -55,7 +55,7 @@ DO ierr = 1, 2
   axmax(ierr) = max(maxval(powerr(0, :, ierr)), abs(minval(powerr(0, :, ierr))))
   
   DO iz = 1, nz
-    axrms(ierr) = axrms(ierr) + powerr(0, iz, ierr) * powerr(0, iz, ierr)
+    axrms(ierr) = axrms(ierr) + powerr(0, iz, ierr)*powerr(0, iz, ierr)
   END DO
   
   axrms(ierr) = sqrt(axrms(ierr) / real(nz))

@@ -28,7 +28,7 @@ DO
   
   IF (oneline(5:18) .EQ. 'ASSEMBLY PITCH') THEN
     READ(oneline(51:), *) aoF2F(iobj)
-    aoF2F(iobj) = aoF2F(iobj) * SQ3
+    aoF2F(iobj) = aoF2F(iobj)*SQ3
   END IF
   
   Lgh = len_trim(oneline)
@@ -74,7 +74,7 @@ IF (mod(nxa((mya+1)/2, iobj), 2) .NE. 1) CALL terminate("EVEN MASTER # of 2-D AS
 
 nya (iobj) = mya
 nxy (iobj) = sum(nxa(1:mya, iobj))
-ndat(iobj) = nxy(iobj) * nz
+ndat(iobj) = nxy(iobj)*nz
 nsfc(iobj) = (mya+1)/2
 
 REWIND (indev)

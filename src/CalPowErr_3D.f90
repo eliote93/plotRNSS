@@ -2,12 +2,12 @@ SUBROUTINE calpowerr_3D()
 
 USE allocs
 USE param, ONLY : ZERO, MP, ERRABS, ERRREL
-USE mdat,  ONLY : lerr, l3d, powerr, ndat, xyzmax, xyzrms, xymax, xyrms, xyztotmax, xyztotrms, nz, nxy, avghgt, hgt, plotobj, pow3d, lptb
+USE mdat,  ONLY : lerr, l3d, iedterr, powerr, ndat, xyzmax, xyzrms, xymax, xyrms, xyztotmax, xyztotrms, nz, nxy, avghgt, hgt, plotobj, pow3d, lptb
 
 IMPLICIT NONE
 
 INTEGER :: iz, ixy, jobj, mxy, ierr, nintact
-REAL :: tot01, tot02, rnrm
+REAL :: tot01, tot02, rat
 ! ------------------------------------------------
 
 CALL dmalloc0(xyzmax, 0, nz, 1, 2)
@@ -23,10 +23,16 @@ jobj = MP(plotobj)
 ! ------------------------------------------------
 !            01. CAL : Err.
 ! ------------------------------------------------
+IF (iedterr .EQ. 2) THEN
+  rat = 1.
+ELSE
+  rat = 100.
+END IF
+
 DO iz = 1, nz
   DO ixy = 1, mxy
-    powerr(ixy, iz, ERRABS) = 100. * (pow3d(ixy, iz, plotobj) - pow3d(ixy, iz, jobj))
-    powerr(ixy, iz, ERRREL) = 100. * (pow3d(ixy, iz, plotobj) - pow3d(ixy, iz, jobj)) / pow3d(ixy, iz, jobj)
+    powerr(ixy, iz, ERRABS) = rat*(pow3d(ixy, iz, plotobj) - pow3d(ixy, iz, jobj))
+    powerr(ixy, iz, ERRREL) = rat*(pow3d(ixy, iz, plotobj) - pow3d(ixy, iz, jobj)) / pow3d(ixy, iz, jobj)
   END DO
 END DO
 ! ------------------------------------------------
@@ -39,7 +45,7 @@ DO ierr = 1, 2
     xyzmax(iz, ierr) = max(maxval(powerr(:, iz, ierr)), abs(minval(powerr(:, iz, ierr))))
     
     DO ixy = 1, mxy
-      xyzrms(iz, ierr) = xyzrms(iz, ierr) + powerr(ixy, iz, ierr) * powerr(ixy, iz, ierr)
+      xyzrms(iz, ierr) = xyzrms(iz, ierr) + powerr(ixy, iz, ierr)*powerr(ixy, iz, ierr)
     END DO
     
     xyzrms(iz, ierr) = sqrt(xyzrms(iz, ierr) / real(mxy))
@@ -67,7 +73,7 @@ DO ierr = 1, 2
     
     DO iz = 1, nz
       DO ixy = 1, mxy
-        xyztotrms(ierr) = xyztotrms(ierr) + powerr(ixy, iz, ierr) * powerr(ixy, iz, ierr)
+        xyztotrms(ierr) = xyztotrms(ierr) + powerr(ixy, iz, ierr)*powerr(ixy, iz, ierr)
       END DO
     END DO
     

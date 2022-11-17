@@ -1,4 +1,5 @@
 SUBROUTINE readRNSS(iobj, fn)
+! RNSS Cards in use : 'GRID_HEX', 'K-EFF', 'VTX. DEFORMATION', 'Asy. 2-D Power', 'Ax. 1-D Power', 'Power in All Region'
 
 USE allocs
 USE param, ONLY : TRUE, DALLR, DOT, BLANK, oneline, probe, io1
@@ -12,7 +13,7 @@ CHARACTER(*), INTENT(IN) :: fn
 CHARACTER*2 :: dumc
 CHARACTER*100 :: gn
 
-INTEGER :: Lgh, fndndata, mz, itmp, mya, mxy, mxy1, mxy2, iz, indev, ist, ied, idat, jdat, idfrm
+INTEGER :: Lgh1, Lgh2, fndndata, mz, itmp, mya, mxy, mxy1, mxy2, iz, indev, idat, idfrm, nasy, nzp, ii
 LOGICAL :: chknum, ifnumeric
 ! ------------------------------------------------
 
@@ -66,9 +67,9 @@ DO
   !IF (probe .EQ. DOT)   EXIT ! ECHO : inp
   IF (probe .NE. DALLR) CYCLE ! READ : Only Output Card
   
-  Lgh = len_trim(oneline)
+  Lgh1 = len_trim(oneline)
   
-  SELECT CASE (oneline(6:Lgh))
+  SELECT CASE (oneline(6:Lgh1))
   CASE ('Assembly Radial 2-D Power Distribution')
     READ (indev, *)
     READ (indev, *)
@@ -78,42 +79,23 @@ DO
       READ (indev, '(A1000)', END = 2000) oneline
       IF (fndndata(oneline) .EQ. 0) EXIT
       
+      Lgh2 = len_trim(oneline)
       mya = mya + 1
-      
       nxa(mya, iobj) = fndndata(oneline) - 1
       
-      ! izp
-      DO idat = 11, len_trim(oneline)
-        IF (oneline(idat:idat) .EQ. BLANK) CYCLE
-        
-        ist = idat
-        
-        DO jdat = ist+1, len_trim(oneline)
-          IF (oneline(jdat:jdat) .EQ. BLANK) EXIT
-        END DO
-        
-        ied = jdat
-        
-        EXIT
-      END DO
-      
-      DO idat = 2, nxa(mya, iobj)
-        DO jdat = ied+1, len_trim(oneline)
-          IF (oneline(jdat:jdat) .NE. BLANK) EXIT
-        END DO
-        
-        IF (jdat-ist .GT. 8) THEN
-          izp(0, mya, iobj) = izp(0, mya, iobj) + 1
-          izp(izp(0, mya, iobj), mya, iobj) = idat
+      ! SET : izp
+      idat = 0
+      DO ii = 8, Lgh2
+        IF (oneline(ii-1:ii-1).EQ.BLANK .AND. oneline(ii:ii).NE.BLANK) THEN ! Non-Zero
+          idat = idat + 1
+          
+          IF (idat .EQ. 1) CYCLE
+          IF (oneline(ii-4:ii-4).EQ.BLANK) THEN
+            nzp = izp(0, mya, iobj) + 1
+            izp(  0, mya, iobj) = nzp
+            izp(nzp, mya, iobj) = idat
+          END IF
         END IF
-        
-        ist = jdat
-        
-        DO jdat = ist+1, len_trim(oneline)
-          IF (oneline(jdat:jdat) .EQ. BLANK) EXIT
-        END DO
-        
-        ied = jdat
       END DO
     END DO
     
@@ -122,11 +104,9 @@ DO
     
     DO
       READ (indev, '(A1000)', END = 2000) oneline
-      
       IF (fndndata(oneline) .EQ. 0) EXIT
       
       mz = mz + 1
-      
       READ (oneline, *) itmp, powax(mz, iobj)
     END DO
     
@@ -143,9 +123,11 @@ IF (mod(mya, 2) .NE. 1) CALL terminate("EVEN RNSS # of 2-D ASY. (y)")
 nya (iobj) = mya
 nxy (iobj) = sum(nxa(1:mya, iobj))
 nsfc(iobj) = (mya+1)/2
-ndat(iobj) = nxy(iobj) * nz
+ndat(iobj) = nxy(iobj)*nz
 
-IF (mod(nxa(nsfc(iobj), iobj) + izp(0, nsfc(iobj), iobj), 2) .NE. 1) CALL terminate("EVEN MASTER # of 2-D ASY. (x)") ! Asymmetric Zero Power at Periphery
+nasy = nxa(   nsfc(iobj), iobj) ! # of Asy. at Cnt. y
+nzp  = izp(0, nsfc(iobj), iobj) ! # of Zero Power at Cnt. y
+IF (mod(nasy + nzp, 2) .NE. 1) CALL terminate("EVEN RNSS # of 2-D ASY. (x)") ! Asymmetric Zero Power at Periphery
 
 REWIND (indev)
 ! ------------------------------------------------
@@ -156,9 +138,8 @@ DO
   !IF (probe .EQ. DOT)   EXIT ! ECHO : inp
   IF (probe .NE. DALLR) CYCLE ! READ : Only Output Card
   
-  Lgh = len_trim(oneline)
-  
-  SELECT CASE (oneline(6:Lgh))
+  Lgh1 = len_trim(oneline)
+  SELECT CASE (oneline(6:Lgh1))
   CASE ('Assembly Radial 2-D Power Distribution')
     READ (indev, *)
     READ (indev, *)
@@ -169,7 +150,6 @@ DO
     
     DO
       READ (indev, '(A1000)', END = 3000) oneline
-      
       IF (fndndata(oneline) .EQ. 0) EXIT
       
       mya  = mya + 1
@@ -183,7 +163,6 @@ DO
   CASE ('Power Distribution in All Region')
     DO
       READ (indev, '(A1000)') oneline
-      
       IF (.NOT. chknum(oneline)) CYCLE
       
       BACKSPACE (indev)
@@ -192,7 +171,6 @@ DO
     
     DO
       READ (indev, '(A1000)', END = 3000) oneline
-      
       IF (fndndata(oneline) .EQ. 0) EXIT
       
       READ (oneline, *) mxy, pow3d(mxy, 1:nz, iobj)

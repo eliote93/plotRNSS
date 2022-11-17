@@ -11,6 +11,7 @@ fdir = 'C:\Users\user\Documents\MATLAB\'
 
 CALL default
 CALL readinp
+CALL fininp
 CALL readobj(1)
 CALL readobj(2)
 CALL normpow
@@ -30,6 +31,7 @@ CALL editgrid
 DO ierr = 1, nerr
   CALL printout(ierr)
   CALL editout(ierr)
+  CALL editerr(ierr)
 END DO
 
 END PROGRAM plotRNSS

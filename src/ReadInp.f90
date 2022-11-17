@@ -1,8 +1,9 @@
+! --------------------------------------------------------------------------------------------------
 SUBROUTINE readinp
 
 USE allocs
-USE param, ONLY : DOT, BANG, BLANK, SLASH, TRUE, FALSE, ONE, MP, oneline, probe, io1, ZERO
-USE mdat,  ONLY : l3d, l02, objcn, objfn, lerr, plotobj, xstr2d, ystr2d, nsize2d, xstr1d, ystr1d, nsize1d, gcf2d, gca2d, gcf1d, gca1d, nz, hgt, avghgt, xylim, zlim, aoF2F, nerr
+USE param, ONLY : DOT, BANG, BLANK, SLASH, TRUE, FALSE, ONE, oneline, probe, io1, ZERO
+USE mdat,  ONLY : l3d, l02, objcn, objfn, lerr, plotobj, xstr2d, ystr2d, nsize2d, xstr1d, ystr1d, nsize1d, gcf2d, gca2d, gcf1d, gca1d, nz, hgt, avghgt, xylim, zlim, aoF2F, nerr, iedterr
 
 IMPLICIT NONE
 
@@ -37,11 +38,9 @@ DO
   SELECT CASE (cn)
   CASE ('ID_01')
     READ  (oneline, *) cn, objcn(1)
-    
     CALL fndchr(oneline, ipos, nchr, SLASH)
     
     objfn(1) = oneline(ipos(1)+1:lgh)
-    
     CALL rmvremainder(objfn(1))
     
   CASE ('ID_02')
@@ -56,6 +55,9 @@ DO
     
   CASE ('PLOT_ERR')
     READ (oneline, *) cn, lerr, plotobj
+    
+  CASE ('EDIT_ERR')
+    READ (oneline, *) cn, iedterr
     
   CASE ('BENCH')
     CALL readbench(oneline)
@@ -87,9 +89,7 @@ DO
   CASE ('HGT')
     ndat = fndndata(oneline)-1
     tmp1 = BLANK
-    
     READ (oneline, *, END = 500) cn, tmp1
-    
     500 CONTINUE
     
     DO idat = 1, 100
@@ -99,9 +99,7 @@ DO
     END DO
     
     nz = idat-1
-    
     CALL dmalloc(hgt, nz)
-    
     READ (oneline, *) cn, hgt(1:nz)
     
   CASE ('XYLIM')
@@ -120,20 +118,32 @@ END DO
 IF (probe .NE. DOT) CALL terminate("INPUT MUST END WITH DOT")
 
 CLOSE (indev) ! 1
+! ------------------------------------------------
+
+END SUBROUTINE readinp
+! --------------------------------------------------------------------------------------------------
+SUBROUTINE fininp()
+
+USE allocs
+USE param, ONLY : MP
+USE mdat,  ONLY : l02, lerr, l3d, plotobj, objcn, nz, nerr, hgt, avghgt, iedterr
+
+IMPLICIT NONE
+! ------------------------------------------------
 
 ! CHK : plot mod
 IF (.NOT.l02 .AND. plotobj.EQ.2) CALL terminate("WRONG PLOTTING OBJECT")
-IF (lerr .AND. objcn(plotobj).EQ.'MC' .AND. objcn(MP(plotobj)).EQ.'NT') CALL terminate("WRONG PLOTTING OBJECT")
+IF (.NOT.lerr .AND. iedterr.EQ.1) CALL terminate("EDIT ERR.")
 
 ! Basic
 l3d = nz .GT. 1
-
 IF (.NOT. associated(hgt)) CALL dmalloc1(hgt, 1)
-
 avghgt = sum(hgt(1:nz)) / nz
 
 nerr = 1
 IF (lerr) nerr = 2
+IF (iedterr .GT. 0) nerr = 1
 ! ------------------------------------------------
 
-END SUBROUTINE readinp
+END SUBROUTINE fininp
+! --------------------------------------------------------------------------------------------------

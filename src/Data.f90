@@ -16,11 +16,10 @@ CHARACTER*100 :: fdir, objfn(2)
 LOGICAL :: l02, lerr, l3d, ldfrm
 LOGICAL, DIMENSION(FNXY) :: lptb
 ! ------------------------------------------------
-INTEGER :: xstr2d, ystr2d, nsize2d, xstr1d, nsize1d
-INTEGER :: gcf2d(4), gcf1d(4)
-INTEGER :: plotobj, nz, nerr
+INTEGER :: xstr2d, ystr2d, nsize2d, xstr1d, nsize1d, drho, plotobj, nz, nerr, iedterr
 
 INTEGER, DIMENSION(2) :: nya, nxy, ndat, nsfc, ndfrm ! (iobj)
+INTEGER, DIMENSION(4) :: gcf2d, gcf1d
 
 INTEGER, DIMENSION(FNX, 2)   :: nxa
 INTEGER, DIMENSION(FNX, FNX) :: asy2Dto1D ! (ix, iy)
@@ -28,10 +27,10 @@ INTEGER, DIMENSION(FNX, FNX) :: asy2Dto1D ! (ix, iy)
 INTEGER, DIMENSION(0:FNV, FNX, 2) :: izp = FALSE ! (ii, iy, iobj), ii = 0 : # of Void Asy., 1 ~ : Location of Void Asy.
 INTEGER, DIMENSION(6, FNXY) :: inghasy
 ! ------------------------------------------------
-REAL :: aoF2F(2), avghgt, xylim, zlim, xyztotpf, axpf
-REAL :: ystr1d, gca2d(4), gca1d(4)
+REAL :: avghgt, xylim, zlim, xyztotpf, axpf, ystr1d
 
-REAL, DIMENSION(2) :: xyztotmax, xyztotrms, xymax, xyrms, axmax, axrms, keff
+REAL, DIMENSION(2) :: aoF2F, xyztotmax, xyztotrms, xymax, xyrms, axmax, axrms, keff
+REAL, DIMENSION(4) :: gca2d, gca1d
 
 REAL, DIMENSION(      FNZ, 2) :: powax ! (iz, iobj)
 REAL, DIMENSION(     FNXY, 2) :: powxy ! (ixy, iobj)
@@ -40,7 +39,7 @@ REAL, DIMENSION(FNXY, FNZ, 2) :: pow3d ! (ixy, iz, iobj)
 REAL, DIMENSION(2, FNXY) :: cntxy ! (x/y, ixy)
 
 REAL, POINTER, DIMENSION(:) :: xyzpf  ! (iz)
-REAL, POINTER, DIMENSION(:) :: hgt       ! (iz)
+REAL, POINTER, DIMENSION(:) :: hgt    ! (iz)
 
 REAL, POINTER, DIMENSION(:,:) :: xyzmax ! (iz, ABS/REL)
 REAL, POINTER, DIMENSION(:,:) :: xyzrms ! (iz, ABS/REL)

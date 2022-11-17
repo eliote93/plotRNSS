@@ -52,7 +52,6 @@ CHARACTER*100 :: locfn
 
 ! Echo
 jndev = io1
-
 OPEN (jndev, FILE = 'plotRNSS.inp')
 
 indev = io2
@@ -60,7 +59,6 @@ WRITE (locfn, '(A, A5)') trim(objfn(plotobj)), '.info'
 CALL openfile(indev, FALSE, locfn)
 
 WRITE (indev, '(A6/)') "$ Echo"
-
 DO
   READ  (jndev, '(A1000)') oneline
   WRITE (indev, '(A)') trim(oneline)
@@ -148,8 +146,8 @@ x0 = [-HALF, -HALF, ZERO,  HALF,  HALF, ZERO]
 y0 = [-HALF,  HALF,  ONE,  HALF, -HALF, -ONE]
 
 aoPch = aoF2F(1) / SQ3
-x0    = x0 * aoF2F(1)
-y0    = y0 * aoPch
+x0    = x0*aoF2F(1)
+y0    = y0*aoPch
 
 DO ixy = 1, nxy(plotobj)
   x1 = x0 + cntxy(1, ixy)
@@ -185,7 +183,7 @@ END SUBROUTINE editgrid
 SUBROUTINE editout(ierr)
 
 USE param, ONLY : FALSE, MP, DOT, BLANK, ERRABS, ERRREL, io2
-USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, xyzpf, xyzmax, xyzrms, axpf, axmax, axrms, powerr, powax
+USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, xyzpf, xyzmax, xyzrms, axpf, axmax, axrms, powerr, powax, iedterr
 
 IMPLICIT NONE
 
@@ -195,7 +193,9 @@ CHARACTER*100 :: locfn
 ! ------------------------------------------------
 
 indev = io2
-IF (lerr) THEN
+
+! Rad.
+IF (lerr .AND. iedterr.NE.2) THEN
   SELECT CASE (ierr)
   CASE (ERRABS); WRITE (locfn, '(A, A11)') trim(objfn(plotobj)), '_abs_xy.out'
   CASE (ERRREL); WRITE (locfn, '(A, A11)') trim(objfn(plotobj)), '_rel_xy.out'
@@ -205,7 +205,6 @@ ELSE
 END IF
 
 CALL openfile(indev, FALSE, locfn)
-! Rad.
 
 IF (l3d) THEN
   istz = 0
@@ -274,5 +273,108 @@ IF (l3d) THEN
 END IF
 ! ------------------------------------------------
 
-END SUBROUTINE editout
+ END SUBROUTINE editout
+! --------------------------------------------------------------------------------------------------
+SUBROUTINE editerr(ierr)
+
+USE param, ONLY : TRUE, FALSE, io1, io2, ERRABS, ERRREL, DALLR, BLANK, oneline, probe
+USE mdat,  ONLY : lerr, l3d, objfn, plotobj, aoF2F, nxy, nz, drho, powerr
+
+IMPLICIT NONE
+
+INTEGER :: ierr, indev, jndev, iz, ixy, fndndata, ii, jj, Lgh, nnz
+INTEGER, DIMENSION(100) :: inz
+CHARACTER*100 :: locfn, gn
+CHARACTER*1000 :: tmpline
+! ------------------------------------------------
+
+IF (.NOT. lerr) RETURN
+
+indev = io2
+SELECT CASE (ierr)
+CASE (ERRABS); WRITE (locfn, '(A, A8)') 'RNSS\' // trim(objfn(plotobj)), '_abs.out'
+CASE (ERRREL); WRITE (locfn, '(A, A8)') 'RNSS\' // trim(objfn(plotobj)), '_rel.out'
+END SELECT
+
+CALL openfile(indev, FALSE, locfn)
+
+WRITE (indev, '(3X,  A8, X, F)') 'grid_hex', aoF2F(plotobj)
+WRITE (indev, '(10X, A5, X, I)') 'K-eff',    drho
+
+! Pow. Err. : 2-D
+IF (.NOT. l3d) THEN
+  DO ixy = 1, nxy(plotobj)
+    powerr(ixy, 0, ierr) = powerr(ixy, 1, ierr)
+  END DO
+END IF
+
+WRITE (indev, '(/A)') '$  1 Assembly Radial 2-D Power Distribution'
+jndev = io1
+gn    = 'RNSS\' // trim(objfn(plotobj)) // '.out'
+CALL openfile(jndev, TRUE, gn)
+
+DO
+  READ (jndev, '(A1000)', END = 1000) oneline
+  IF (probe .NE. DALLR) CYCLE ! READ : Only Output Card
+  
+  Lgh = len_trim(oneline)
+  IF (oneline(6:Lgh) .NE. 'Assembly Radial 2-D Power Distribution') CYCLE
+  
+  READ  (jndev, *)
+  WRITE (indev, *)
+  READ  (jndev, '(A1000)') oneline
+  WRITE (indev, '(A)') trim(oneline)
+  READ  (jndev, *)
+  WRITE (indev, *)
+  
+  ixy = 0
+  DO
+    READ (jndev, '(A1000)', END = 1000) oneline
+    IF (fndndata(oneline) .EQ. 0) EXIT
+    
+    Lgh = len_trim(oneline)
+    nnz = 0
+    tmpline = BLANK
+    WRITE (tmpline, '(A7)') oneline(1:7)
+    
+    DO ii = 9, Lgh
+      IF (oneline(ii-1:ii-1).EQ.BLANK .AND. oneline(ii:ii).NE.BLANK) THEN
+        nnz = nnz + 1 ! Not-Zero
+        inz(nnz) = ii
+      END IF
+    END DO
+    
+    DO ii = 1, nnz
+      ixy = ixy + 1
+      jj = inz(ii)
+      WRITE (tmpline(jj-2:jj+5), '(F7.3)') powerr(ixy, 0, ierr)
+    END DO
+    
+    WRITE (indev, '(A)') tmpline
+  END DO
+END DO
+
+1000 CONTINUE
+
+CLOSE (jndev) ! 1
+
+! Pow. Err. : 1-D
+WRITE (indev, '(/A/)') '$  2 Axial 1-D Power Distribution'
+
+DO iz = 1, nz
+  WRITE (indev, '(I7, F10.4)') iz, powerr(0, iz, ierr)
+END DO
+
+! Pow. Err. : 3-D
+WRITE (indev, '(/A/)') '$  4 Power Distribution in All Region'
+WRITE (indev, '(X, A6)') 'Assem.'
+
+DO ixy = 1, nxy(plotobj)
+  WRITE (indev, '(I7, 50(1PE15.6))') ixy, (powerr(ixy, iz, ierr), iz = 1, nz)
+END DO
+
+CLOSE (indev) ! 2
+! ------------------------------------------------
+
+END SUBROUTINE editerr
 ! --------------------------------------------------------------------------------------------------
