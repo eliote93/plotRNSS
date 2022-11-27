@@ -1,24 +1,24 @@
-ID_01        RN / T-PEN LC 00
-ID_02        RN / T-PEN LC 01
+ID_01        RN / FDM LC 32_abs
+ID_02        RN / T-PEN LC 32_abs
 plot_Err     T  2 ! Err. = plot obj - other obj
-edit_Err     1 ! 1 : Make .out / 2 : Plot .out
+edit_Err     2 ! 1 : Make .out / 2 : Plot .out
 xylim        2.
 zlim         1.5
 
-bench        RAD_SNR300_ERR
-!tpos_2d      47 -55
-!tsize_2d     20
-!gcf_2d       500 100 1070 800
-!gca_2d       0.11 0.035 0.76 1.05
+bench_rad    SNR300_ERR
+!tpos_2d     47 -55
+!tsize_2d    20
+!gcf_2d      500 100 1070 800
+!gca_2d      0.11 0.035 0.76 1.05
 
-!bench        AX_BCN_ERR
-!hgt          50*8.
-!tpos_1d      10 0.
-!tsize_1d     30
-!gcf_1d       500 100 1050 730
-!gca_1d       0.125 0.17 0.85 0.8
+!bench_ax    BCN_ERR
+!hgt         50*8.
+!tpos_1d     10 0.
+!tsize_1d    30
+!gcf_1d      500 100 1050 730
+!gca_1d      0.125 0.17 0.85 0.8
 
-!ptb          0. 4.156921938165306 0. 5.
+!ptb         0. 4.156921938165306 0. 5.
 .
 
 ! BCN : ERR/POW

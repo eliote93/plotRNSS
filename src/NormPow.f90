@@ -9,7 +9,7 @@ INTEGER :: iobj, ixy, iz
 REAL :: totpow, rnrm
 ! ------------------------------------------------
 
-IF (iedterr .EQ. 2) RETURN
+IF (iedterr .GT. 0) RETURN ! Unstr.
 
 DO iobj = 1, 2
   IF (iobj.EQ.2 .AND. .NOT.l02) EXIT

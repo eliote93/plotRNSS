@@ -183,7 +183,7 @@ END SUBROUTINE editgrid
 SUBROUTINE editout(ierr)
 
 USE param, ONLY : FALSE, MP, DOT, BLANK, ERRABS, ERRREL, io2
-USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, xyzpf, xyzmax, xyzrms, axpf, axmax, axrms, powerr, powax, iedterr
+USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, xyzpf, xyzmax, xyzrms, axpf, axmax, axrms, powerr, powax
 
 IMPLICIT NONE
 
@@ -195,7 +195,7 @@ CHARACTER*100 :: locfn
 indev = io2
 
 ! Rad.
-IF (lerr .AND. iedterr.NE.2) THEN
+IF (lerr) THEN
   SELECT CASE (ierr)
   CASE (ERRABS); WRITE (locfn, '(A, A11)') trim(objfn(plotobj)), '_abs_xy.out'
   CASE (ERRREL); WRITE (locfn, '(A, A11)') trim(objfn(plotobj)), '_rel_xy.out'

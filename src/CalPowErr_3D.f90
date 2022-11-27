@@ -15,19 +15,16 @@ CALL dmalloc0(xyzrms, 0, nz, 1, 2)
 
 IF (.NOT. lerr) RETURN
 
-mxy = nxy(plotobj)
-
+jobj = MP (plotobj)
+mxy  = nxy(plotobj)
 CALL dmalloc0(powerr, 0, mxy, 0, nz, 1, 2)
-
-jobj = MP(plotobj)
 ! ------------------------------------------------
 !            01. CAL : Err.
 ! ------------------------------------------------
-IF (iedterr .EQ. 2) THEN
-  rat = 1.
-ELSE
-  rat = 100.
-END IF
+SELECT CASE (iedterr)
+CASE (2);     rat = 1.
+CASE DEFAULT; rat = 100.
+END SELECT
 
 DO iz = 1, nz
   DO ixy = 1, mxy
@@ -39,7 +36,6 @@ END DO
 !            02. SUMM.
 ! ------------------------------------------------
 xyztotrms = ZERO
-
 DO ierr = 1, 2
   DO iz = 1, nz
     xyzmax(iz, ierr) = max(maxval(powerr(:, iz, ierr)), abs(minval(powerr(:, iz, ierr))))

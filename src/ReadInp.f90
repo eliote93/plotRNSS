@@ -59,8 +59,11 @@ DO
   CASE ('EDIT_ERR')
     READ (oneline, *) cn, iedterr
     
-  CASE ('BENCH')
-    CALL readbench(oneline)
+  CASE ('BENCH_RAD')
+    CALL readbench_rad(oneline)
+    
+  CASE ('BENCH_AX')
+    CALL readbench_ax(oneline)
     
   CASE ('TPOS_1D')
     READ (oneline, *) cn, xstr1d, ystr1d
