@@ -1,4 +1,33 @@
 ! --------------------------------------------------------------------------------------------------
+SUBROUTINE openinp()
+
+USE param, ONLY : io1
+USE mdat,  ONLY : inpfn
+
+IMPLICIT NONE
+
+INTEGER :: indev, narg, ichar1st
+LOGICAL :: lext
+! ------------------------------------------------
+
+narg = iargc()
+IF (narg .EQ. 1) THEN ! User Inputted
+  CALL getarg(narg, inpfn)
+  inpfn = trim(inpfn)
+  
+  ichar1st = ichar(inpfn(1:1))
+  IF (ichar1st.EQ.0 .OR. ichar1st.EQ.32) CALL terminate("WRONG USER INPUT")
+ELSE ! Default
+  inpfn = 'plotRNSS.inp'
+END IF
+
+INQUIRE (FILE = inpfn, EXIST = lext)
+IF (.NOT. lext) CALL terminate("FILE DOES NOT EXIST - " // inpfn)
+OPEN (io1, FILE = inpfn)
+! ------------------------------------------------
+
+END SUBROUTINE openinp
+! --------------------------------------------------------------------------------------------------
 SUBROUTINE readinp
 
 USE allocs
@@ -7,22 +36,15 @@ USE mdat,  ONLY : l3d, l02, objcn, objfn, lerr, plotobj, xstr2d, ystr2d, nsize2d
 
 IMPLICIT NONE
 
-CHARACTER*12 :: fn, cn, tmp2
+CHARACTER*12 :: cn, tmp2
 
 INTEGER :: lgh, fndndata, ndat, idat, nchr, indev
 INTEGER :: ipos(2)
-LOGICAL :: lext
 
 CHARACTER*30, DIMENSION(100) :: tmp1
 ! ------------------------------------------------
 
-fn    = 'plotRNSS.inp'
 indev = io1
-
-INQUIRE (FILE = fn, EXIST = lext)
-IF (.NOT.lext) CALL terminate("FILE DOES NOT EXIST - " // fn)
-
-OPEN (indev, FILE = fn)
 
 DO
   READ (indev, '(A1000)', END = 1000) oneline

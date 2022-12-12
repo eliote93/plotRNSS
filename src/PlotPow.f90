@@ -9,8 +9,8 @@ IMPLICIT NONE
 INTEGER :: iz, ixy, iobj
 ! ------------------------------------------------
 
-CALL dmalloc0(xyzpf, 0, nz)
-CALL dmalloc0(powerr,   0, nxy(plotobj), 0, nz, 1, 1)
+CALL dmalloc0(xyzpf,  0, nz)
+CALL dmalloc0(powerr, 0, nxy(plotobj), 0, nz, 1, 1)
 
 ! CnP
 DO iz = 1, nz

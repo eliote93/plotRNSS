@@ -11,7 +11,7 @@ INTEGER, PARAMETER :: FNV  =  10 ! Max. # of Void. Asy. = Zero Pw.
 INTEGER, PARAMETER :: FNP  =  10 ! Max. # of Perturbed Pt.
 ! ------------------------------------------------
 CHARACTER*2   :: objcn(2)
-CHARACTER*100 :: fdir, objfn(2)
+CHARACTER*100 :: inpfn, fdir, objfn(2)
 
 LOGICAL :: l02, lerr, l3d, ldfrm
 LOGICAL, DIMENSION(FNXY) :: lptb

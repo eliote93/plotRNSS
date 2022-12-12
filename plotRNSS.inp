@@ -1,8 +1,8 @@
-ID_01        RN / FDM LC 32_abs
-ID_02        RN / T-PEN LC 32_abs
+ID_01        RN / FDM_LC_01_abs
+ID_02        RN / TPEN_LC_01_abs
 plot_Err     T  2 ! Err. = plot obj - other obj
 edit_Err     2 ! 1 : Make .out / 2 : Plot .out
-xylim        2.
+xylim        -1 ! -1 : Auto
 zlim         1.5
 
 bench_rad    SNR300_ERR

@@ -41,8 +41,8 @@ END SUBROUTINE printout
 ! --------------------------------------------------------------------------------------------------
 SUBROUTINE editinfo()
 
-USE param, ONLY : FALSE, DOT, io1, io2, oneline, probe
-USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, xylim, zlim, xstr2d, ystr2d, nsize2d, gcf2d, gca2d, xstr1d, ystr1d, nsize1d, gcf1d, gca1d
+USE param, ONLY : FALSE, DOT, io1, io2, oneline, probe, ERRABS
+USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, xylim, zlim, xstr2d, ystr2d, nsize2d, gcf2d, gca2d, xstr1d, ystr1d, nsize1d, gcf1d, gca1d, powerr
 
 IMPLICIT NONE
 
@@ -79,6 +79,14 @@ IF (l3d) THEN
   nn = nz + 1
 ELSE
   nn = 1
+END IF
+
+IF (xylim .LT. 0) THEN
+  IF (lerr) THEN
+    xylim = max(maxval(powerr(1:nxy(plotobj), 1:nz, ERRABS)), abs(minval(powerr(1:nxy(plotobj), 1:nz, ERRABS)))) ! Fixed
+  ELSE
+    xylim = maxval(powerr(1:nxy(plotobj), 1:nz, 1))
+  END IF
 END IF
 
 WRITE (indev, '(A9, X, 2I6, A25)') "# of Dat.", nxy(plotobj), nn,        " ! Asy., Img."
@@ -217,7 +225,7 @@ IF (lerr) THEN
 ELSE
   WRITE (indev, '(A10, A14, 1000I13)') "Legend", "P.F.",        (ixy, ixy = 1, NLGH)
 END IF
-  
+
 DO iz = istz, nz
   IF (lerr) THEN
     WRITE (indev, '(I10,    2F7.2)') iz, xyzmax(iz, ierr), xyzrms(iz, ierr)
@@ -278,7 +286,7 @@ END IF
 SUBROUTINE editerr(ierr)
 
 USE param, ONLY : TRUE, FALSE, io1, io2, ERRABS, ERRREL, DALLR, BLANK, oneline, probe
-USE mdat,  ONLY : lerr, l3d, objfn, plotobj, aoF2F, nxy, nz, drho, powerr
+USE mdat,  ONLY : lerr, l3d, iedterr, objfn, plotobj, aoF2F, nxy, nz, drho, powerr
 
 IMPLICIT NONE
 
@@ -288,6 +296,7 @@ CHARACTER*100 :: locfn, gn
 CHARACTER*1000 :: tmpline
 ! ------------------------------------------------
 
+IF (iedterr .EQ. 0) RETURN
 IF (.NOT. lerr) RETURN
 
 indev = io2
