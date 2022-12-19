@@ -12,6 +12,8 @@ fdir = 'C:\Users\user\Documents\MATLAB\'
 CALL default
 CALL openinp
 CALL readinp
+CALL readbench_rad
+CALL readbench_ax
 CALL fininp
 CALL readobj(1)
 CALL readobj(2)

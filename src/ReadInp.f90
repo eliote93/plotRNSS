@@ -32,7 +32,7 @@ SUBROUTINE readinp
 
 USE allocs
 USE param, ONLY : DOT, BANG, BLANK, SLASH, TRUE, FALSE, ONE, oneline, probe, io1, ZERO
-USE mdat,  ONLY : l3d, l02, objcn, objfn, lerr, plotobj, xstr2d, ystr2d, nsize2d, xstr1d, ystr1d, nsize1d, gcf2d, gca2d, gcf1d, gca1d, nz, hgt, avghgt, xylim, zlim, aoF2F, nerr, iedterr
+USE mdat,  ONLY : l3d, l02, objcn, objfn, lerr, plotobj, xstr2d, ystr2d, nsize2d, xstr1d, ystr1d, nsize1d, gcf2d, gca2d, gcf1d, gca1d, nz, hgt, avghgt, xylim, zlim, aoF2F, nerr, iedterr, lbnch, cbnch
 
 IMPLICIT NONE
 
@@ -63,7 +63,7 @@ DO
     CALL fndchr(oneline, ipos, nchr, SLASH)
     
     objfn(1) = oneline(ipos(1)+1:lgh)
-    CALL rmvremainder(objfn(1))
+    CALL rmvfnblnk(objfn(1))
     
   CASE ('ID_02')
     l02 = TRUE
@@ -73,7 +73,7 @@ DO
     
     objfn(2) = oneline(ipos(1)+1:lgh)
     
-    CALL rmvremainder(objfn(2))
+    CALL rmvfnblnk(objfn(2))
     
   CASE ('PLOT_ERR')
     READ (oneline, *) cn, lerr, plotobj
@@ -81,12 +81,11 @@ DO
   CASE ('EDIT_ERR')
     READ (oneline, *) cn, iedterr
     
-  CASE ('BENCH_RAD')
-    CALL readbench_rad(oneline)
-    
-  CASE ('BENCH_AX')
-    CALL readbench_ax(oneline)
-    
+  CASE ('BENCH')
+    READ (oneline, *) cn, cbnch
+    CALL toupper(cbnch)
+    lbnch = TRUE
+        
   CASE ('TPOS_1D')
     READ (oneline, *) cn, xstr1d, ystr1d
     

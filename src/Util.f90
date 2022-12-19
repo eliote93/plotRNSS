@@ -18,7 +18,7 @@ STOP
 
 END SUBROUTINE terminate
 ! --------------------------------------------------------------------------------------------------
-SUBROUTINE rmvremainder(aa)
+SUBROUTINE rmvfnblnk(aa)
 ! REMOVE : Blanks at head & Tale
 
 USE param, ONLY : BLANK
@@ -37,19 +37,16 @@ lgh1 = len_trim(aa)
 
 DO icol = 1, lgh1
   IF (aa(icol:icol) .EQ. BLANK) CYCLE
-  
   EXIT
 END DO
-
 ist = icol
 
 DO icol = lgh1, 1, -1
   IF (aa(icol:icol) .EQ. BLANK) CYCLE
-  
   EXIT
 END DO
+ied = icol
 
-ied  = icol
 lgh2 = ied - ist + 1
 
 aa(1:lgh2) = aa(ist:ied)
@@ -57,7 +54,7 @@ aa(lgh2+1:) = ''
 aa = trim(aa)
 ! ------------------------------------------------
 
-END SUBROUTINE rmvremainder
+END SUBROUTINE rmvfnblnk
 ! --------------------------------------------------------------------------------------------------
 SUBROUTINE toupper(aa)
 ! CONVERT : lower case string to upper case
@@ -82,7 +79,7 @@ DO icol = 1, len_trim(aa)
   IF (ia .GE. INDXA) aa(icol:icol) = char(ia - 32)
 END DO
 
-CALL rmvremainder(aa)
+CALL rmvfnblnk(aa)
 ! ------------------------------------------------
 
 END SUBROUTINE toupper

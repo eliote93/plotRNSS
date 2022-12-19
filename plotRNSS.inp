@@ -1,17 +1,15 @@
-ID_01        RN / FDM_LC_01_abs
-ID_02        RN / TPEN_LC_01_abs
-plot_Err     T  2 ! Err. = plot obj - other obj
-edit_Err     2 ! 1 : Make .out / 2 : Plot .out
-xylim        -1 ! -1 : Auto
+ID_01        RN / Ref LC
+plot_Err     F  1 ! Err. = plot obj - other obj
+edit_Err     0 ! 1 : Make .out / 2 : Plot .out
+xylim        3. ! -1 : Auto
 zlim         1.5
+bench        S3
 
-bench_rad    SNR300_ERR
 !tpos_2d     47 -55
 !tsize_2d    20
 !gcf_2d      500 100 1070 800
 !gca_2d      0.11 0.035 0.76 1.05
 
-!bench_ax    BCN_ERR
 !hgt         50*8.
 !tpos_1d     10 0.
 !tsize_1d    30
@@ -21,7 +19,7 @@ bench_rad    SNR300_ERR
 !ptb         0. 4.156921938165306 0. 5.
 .
 
-! BCN : ERR/POW
-! PGSFR : ERR/POW
-! V4 CHAO95 : ERR/POW
-! SNR300 : ERR/POW
+! BCN
+! PGSFR
+! V4_CHAO95
+! S3
