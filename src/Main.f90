@@ -17,6 +17,7 @@ CALL readbench_ax
 CALL fininp
 CALL readobj(1)
 CALL readobj(2)
+CALL adjmc
 CALL normpow
 CALL chkobj
 

@@ -1,4 +1,5 @@
 SUBROUTINE normpow()
+! DO NOT Integrate 3-D Assembly Power into 2-D Assembly Power nor 1-D Plane Power
 
 USE param, ONLY : EPS7, ZERO
 USE mdat,  ONLY : FNXY, l02, l3d, iedterr, nz, nxy, ndat, avghgt, hgt, pow3d, powxy, powax

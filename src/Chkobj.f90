@@ -1,22 +1,28 @@
 SUBROUTINE chkobj()
 
 USE param, ONLY : EPS7, MP
-USE mdat,  ONLY : lerr, ldfrm, l3d, nxa, nya, nxy, plotobj, izp, aoF2F, keff, ndfrm, drho, iedterr
+USE mdat,  ONLY : FNXY, lerr, ldfrm, l3d, nxa, nya, nxy, plotobj, izp, aoF2F, keff, ndfrm, drho, iedterr
 
 IMPLICIT NONE
 
 INTEGER :: iya, idat
 ! ------------------------------------------------
 
+! Deformation
 ldfrm = ndfrm(plotobj) .GT. 0
 IF (l3d .AND. ldfrm) CALL terminate("3D DEFORMATION IS NOT DEVELOPED SO FAR")
 
-IF (aoF2F(1) .LT. EPS7)  CALL terminate("AOF2F IS NOT INPUTTED")
+! Basics
+IF (aoF2F(1) .LT. EPS7) CALL terminate("AOF2F IS NOT INPUTTED")
+!IF (keff(1)  .LT. EPS7) CALL terminate("K-EFF")
+IF (nxy(plotobj) .GT. FNXY) CALL terminate("TOO MANY ASY.")
 
+! Comparison
 IF (.NOT. lerr) RETURN
 
 IF (abs(aoF2F(1) - aoF2F(2)) .GT. 1E-4) CALL terminate("AOF2F IS DIFFERENT")
 IF (nya(1) .NE. nya(2)) CALL terminate("DIFFERENT # OF 2-D ASY. (y)")
+!IF (keff(2) .LT. EPS7) CALL terminate("K-EFF")
 
 DO iya = 1, nya(1)
   IF (nxa(iya, 1) .NE. nxa(iya, 2)) CALL terminate("DIFFERENT # OF 2-D ASY. (x)")
@@ -26,11 +32,7 @@ DO iya = 1, nya(1)
   END DO
 END DO
 
-IF (nxy(plotobj) .GT. 10000) CALL terminate("TOO MANY ASY.")
-
-!IF (keff(1) .LT. EPS) CALL terminate("K-EFF")
-!IF (keff(2) .LT. EPS) CALL terminate("K-EFF")
-
+! EDIT
 IF (iedterr .EQ. 2) THEN
   drho = int(keff(plotobj) - keff(MP(plotobj)))
   WRITE (*, '(18X, A17, I5)')       'Reference drho : ',    int(keff(MP(plotobj)))
@@ -42,8 +44,6 @@ ELSE
   WRITE (*, '(18X, A18, F7.5)')       'Test      k-eff : ',       keff(plotobj)
   WRITE (*, '(12X, A24, I5, X, A5/)') 'Reactivity Difference : ', drho, '(pcm)'
 END IF
-
-
 ! ------------------------------------------------
 
 END SUBROUTINE chkobj

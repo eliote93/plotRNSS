@@ -165,6 +165,7 @@ IF (led) CALL terminate("MOVE LINE : " // aa)
 END SUBROUTINE moveline
 ! --------------------------------------------------------------------------------------------------
 FUNCTION chknum(aa)
+! TRUE : Any Entry is Numeric
 
 USE param, ONLY : BLANK, TRUE, FALSE
 
@@ -181,9 +182,7 @@ chknum = FALSE
 DO icol = 1, len_trim(aa)
   IF (aa(icol:icol) .EQ. BLANK) CYCLE
   
-  
   iascii = ichar(aa(icol:icol))
-  
   IF ((iascii .NE. 9) .AND. ((iascii-48)*(iascii-57) .LE. 0)) chknum = TRUE
   
   RETURN
@@ -272,6 +271,7 @@ SELECT CASE (objcn(iobj))
 CASE ('RN');  CALL readRNSS      (iobj, objfn(iobj))
 CASE ('MO');  CALL readMASTER_OLD(iobj, objfn(iobj)) ! MASETER OLD
 CASE ('MN');  CALL readMASTER_NEW(iobj, objfn(iobj)) ! MASETER NEW
+CASE ('MC');  CALL readMcCARD    (iobj, objfn(iobj)) ! MASETER NEW
 CASE DEFAULT; CALL terminate("WRONG CODE NAME")
 END SELECT
 
@@ -300,6 +300,7 @@ chksamepts = TRUE
 END FUNCTION chksamepts
 ! --------------------------------------------------------------------------------------------------
 FUNCTION ifnumeric(aline)
+! TRUE : 1st Character is Numeric
 
 USE param, ONLY : BLANK, TRUE, FALSE, MXNCOL
 
@@ -322,7 +323,6 @@ END DO
 DO icol = 1, MXNCOL
   iascii = ichar(scline(icol))
   
-   ! DETERMINE : if the first character is numeric
   IF (scline(icol).NE.BLANK .AND. iascii.NE.9) THEN
     IF ((iascii-48)*(iascii-57) .LE. 0) ifnumeric = TRUE
     

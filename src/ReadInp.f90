@@ -28,11 +28,11 @@ OPEN (io1, FILE = inpfn)
 
 END SUBROUTINE openinp
 ! --------------------------------------------------------------------------------------------------
-SUBROUTINE readinp
+SUBROUTINE readinp()
 
 USE allocs
 USE param, ONLY : DOT, BANG, BLANK, SLASH, TRUE, FALSE, ONE, oneline, probe, io1, ZERO
-USE mdat,  ONLY : l3d, l02, objcn, objfn, lerr, plotobj, xstr2d, ystr2d, nsize2d, xstr1d, ystr1d, nsize1d, gcf2d, gca2d, gcf1d, gca1d, nz, hgt, avghgt, xylim, zlim, aoF2F, nerr, iedterr, lbnch, cbnch
+USE mdat,  ONLY : l3d, l02, objcn, objfn, lerr, plotobj, xstr2d, ystr2d, nsize2d, xstr1d, ystr1d, nsize1d, gcf2d, gca2d, gcf1d, gca1d, nz, hgt, avghgt, xylim, zlim, aoF2F, nerr, iedterr, lbnch, cbnch, nMC
 
 IMPLICIT NONE
 
@@ -60,8 +60,10 @@ DO
   SELECT CASE (cn)
   CASE ('ID_01')
     READ  (oneline, *) cn, objcn(1)
-    CALL fndchr(oneline, ipos, nchr, SLASH)
+    CALL toupper(objcn(1))
+    IF (objcn(1) .EQ. 'MC') READ  (oneline, *) cn, objcn(1), nMC(1)
     
+    CALL fndchr(oneline, ipos, nchr, SLASH)
     objfn(1) = oneline(ipos(1)+1:lgh)
     CALL rmvfnblnk(objfn(1))
     
@@ -69,10 +71,11 @@ DO
     l02 = TRUE
     
     READ  (oneline, *) cn, objcn(2)
+    CALL toupper(objcn(2))
+    IF (objcn(2) .EQ. 'MC') READ  (oneline, *) cn, objcn(2), nMC(2)
+    
     CALL fndchr(oneline, ipos, nchr, SLASH)
-    
     objfn(2) = oneline(ipos(1)+1:lgh)
-    
     CALL rmvfnblnk(objfn(2))
     
   CASE ('PLOT_ERR')
@@ -150,14 +153,17 @@ SUBROUTINE fininp()
 
 USE allocs
 USE param, ONLY : MP
-USE mdat,  ONLY : l02, lerr, l3d, plotobj, objcn, nz, nerr, hgt, avghgt, iedterr
+USE mdat,  ONLY : l02, lerr, l3d, plotobj, nz, nerr, hgt, avghgt, iedterr, nMC
 
 IMPLICIT NONE
 ! ------------------------------------------------
 
 ! CHK : plot mod
-IF (.NOT.l02 .AND. plotobj.EQ.2) CALL terminate("WRONG PLOTTING OBJECT")
+IF (.NOT.l02  .AND. plotobj.EQ.2) CALL terminate("WRONG PLOTTING OBJECT")
 IF (.NOT.lerr .AND. iedterr.EQ.1) CALL terminate("EDIT ERR.")
+
+IF (nMC(1).NE.0 .AND. (nMC(1).LT.1 .OR. nMC(1).GT.9)) CALL terminate("MC. #")
+IF (nMC(2).NE.0 .AND. (nMC(2).LT.1 .OR. nMC(2).GT.9)) CALL terminate("MC. #")
 
 ! Basic
 l3d = nz .GT. 1

@@ -2,7 +2,7 @@ SUBROUTINE plotpow()
 ! PLOT : inputted Power instead Power Error
 
 USE allocs
-USE mdat, ONLY : nz, nxy, plotobj, powerr, pow3d, xyztotpf, xyzpf, axpf, powxy, powax, axpow, hgt, avghgt
+USE mdat, ONLY : nz, nxy, plotobj, powerr, pow3d, xyztotpf, xyzpf, axpf, powxy, powax, hgt, avghgt
 
 IMPLICIT NONE
 

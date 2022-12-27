@@ -42,6 +42,7 @@
 		<File RelativePath=".\src\ReadInp.f90"/>
 		<File RelativePath=".\src\ReadMASTER_New.f90"/>
 		<File RelativePath=".\src\readMASTER_Old.f90"/>
+		<File RelativePath=".\src\readMcCARD.f90"/>
 		<File RelativePath=".\src\ReadRNSS.f90"/>
 		<File RelativePath=".\src\SetGeo.f90"/>
 		<File RelativePath=".\src\Util.f90"/></Filter></Files>

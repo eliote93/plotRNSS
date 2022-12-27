@@ -1,7 +1,7 @@
 SUBROUTINE default()
 
 USE param, ONLY : TRUE, FALSE, ONE, ZERO
-USE mdat,  ONLY : nz, l02, xylim, zlim, aoF2F, ndfrm, lptb, iedterr, lbnch
+USE mdat,  ONLY : nz, l02, xylim, zlim, aoF2F, ndfrm, lptb, iedterr, lbnch, nxy, ndat, nya
 
 IMPLICIT NONE
 
