@@ -1,9 +1,9 @@
-ID_01        MC 1 / MC UC Deformed RX000 10M 100 300
-ID_02        RN / TPN uC Deformed RX000
+ID_01        RN / MC UC Deformed RX000 10M 100 300_abs
+ID_02        RN / TPN UC Deformed RX000_abs
 plot_Err     T  2 ! Err. = plot obj - other obj
-edit_Err     0 ! 1 : Make .out / 2 : Plot .out
-xylim        3. ! -1 : Auto
-zlim         1.5
+edit_Err     2 ! 1 : Make .out / 2 : Plot .out
+xylim        45. ! -1 : Auto
+zlim         3.
 bench        S3
 
 !tpos_2d     47 -55

@@ -14,18 +14,18 @@ REAL :: keffloc
 ! ------------------------------------------------
 
 ! READ : 1st
-keff = ZERO
+keff(iobj) = ZERO
 CALL readMcCARD1st(iobj, keffloc, fn)
-keff = keff + keffloc
+keff(iobj) = keff(iobj) + keffloc
 
 ! READ : 2nd
 DO iMC = 2, nMC(iobj)
   CALL readMcCARD2nd(iobj, keffloc, fn, iMC)
-  keff = keff + keffloc
+  keff(iobj) = keff(iobj) + keffloc
 END DO
 
 ! Avg.
-keff = keff / real(nMC(iobj))
+keff(iobj) = keff(iobj) / real(nMC(iobj))
 
 DO iz = 1, nz
   DO ixy = 1, nxy(iobj)
@@ -196,29 +196,75 @@ IMPLICIT NONE
 INTEGER :: ito, ifr, ixy, iz
 ! ------------------------------------------------
 
-! LOGICAL
+IF (objcn(1).NE.'MC' .AND. objcn(2).NE.'MC') RETURN
+
 IF (l02) THEN
-  IF (objcn(1).EQ.'MC' .AND. objcn(2).EQ.'MC') CALL terminate("McCARD ALONE")
-  
-  IF (objcn(1).EQ.'MC') THEN
-    ito = 1
-    ifr = 2
+  IF (objcn(1).EQ.'MC' .AND. objcn(2).EQ.'MC') THEN
+    CALL adjMC_bench(1)
+    CALL adjMC_bench(2)
   ELSE
-    ito = 2
-    ifr = 1
+    IF (objcn(1).EQ.'MC') THEN
+      ito = 1
+      ifr = 2
+    ELSE
+      ito = 2
+      ifr = 1
+    END IF
+    
+    nya (ito) = nya (ifr)
+    nsfc(ito) = nsfc(ifr)
+    nxa(1:FNX, ito) = nxa(1:FNX, ifr)
+    izp(0:FNV, 1:FNX, ito) = izp(0:FNV, 1:FNX, ifr)
+    
+    ! 2-D Norm.
+    powxy(:, ito) = ZERO
+    powax(:, ito) = ZERO
+    
+    DO iz = 1, nz
+      DO ixy = 1, nxy(ito)
+        powxy(ixy, ito) = powxy(ixy, ito) + pow3d(ixy, iz, ito)
+        powax(iz,  ito) = powax(iz,  ito) + pow3d(ixy, iz, ito)
+      END DO
+    END DO
   END IF
 ELSE
-  IF (objcn(1).EQ.'MC') CALL terminate("McCARD ALONE")
-  RETURN
+  CALL adjMC_bench(1)
+END IF
+! ------------------------------------------------
+
+END SUBROUTINE adjMC
+! --------------------------------------------------------------------------------------------------
+SUBROUTINE adjMC_bench(ito)
+
+USE param, ONLY : ZERO
+USE mdat,  ONLY : lbnch, cbnch, FNX, FNV, l02, objcn, nxa, nya, nsfc, izp, pow3d, powxy, powax, nxy, nz
+
+IMPLICIT NONE
+
+INTEGER :: ito, iz, ixy
+! ------------------------------------------------
+
+IF (.NOT. lbnch) CALL terminate("McCARD ALONE W/O BENCH")
+
+! CnP
+IF (cbnch(1:2) .EQ. 'S3') THEN
+  nya (ito) = 23
+  nsfc(ito) = 12
+  nxa(1:23, ito) = [2, 5, 8, 11, 14, 15, 18, 15, 16, 15, 18, 15, 18, 15, 16, 15, 18, 15, 14, 11, 8, 5, 2]
+  izp(0,  6, ito) = 2; izp(1,  6, ito) = 8; izp(2,  6, ito) = 9
+  izp(0,  8, ito) = 2; izp(1,  8, ito) = 5; izp(2,  8, ito) = 12
+  izp(0,  9, ito) = 2; izp(1,  9, ito) = 8; izp(2,  9, ito) = 10
+  izp(0, 10, ito) = 2; izp(1, 10, ito) = 4; izp(2, 10, ito) = 13
+  izp(0, 12, ito) = 2; izp(1, 12, ito) = 6; izp(2, 12, ito) = 11
+  izp(0, 14, ito) = 2; izp(1, 14, ito) = 4; izp(2, 14, ito) = 13
+  izp(0, 15, ito) = 2; izp(1, 15, ito) = 8; izp(2, 15, ito) = 10
+  izp(0, 16, ito) = 2; izp(1, 16, ito) = 5; izp(2, 16, ito) = 12
+  izp(0, 18, ito) = 2; izp(1, 18, ito) = 8; izp(2, 18, ito) = 9
+ELSE
+  CALL terminate("McCARD BENCH")
 END IF
 
-! Geo.
-nya (ito) = nya (ifr)
-nsfc(ito) = nsfc(ifr)
-nxa(1:FNX, ito) = nxa(1:FNX, ifr)
-izp(0:FNV, 1:FNX, ito) = izp(0:FNV, 1:FNX, ifr)
-
-! 2-D, 1-D Power : will be Normalized later
+! 2-D Norm.
 powxy(:, ito) = ZERO
 powax(:, ito) = ZERO
 DO iz = 1, nz
@@ -229,5 +275,5 @@ DO iz = 1, nz
 END DO
 ! ------------------------------------------------
 
-END SUBROUTINE adjMC
+END SUBROUTINE adjMC_bench
 ! --------------------------------------------------------------------------------------------------

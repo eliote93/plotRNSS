@@ -2,7 +2,7 @@ SUBROUTINE normpow()
 ! DO NOT Integrate 3-D Assembly Power into 2-D Assembly Power nor 1-D Plane Power
 
 USE param, ONLY : EPS7, ZERO
-USE mdat,  ONLY : FNXY, l02, l3d, iedterr, nz, nxy, ndat, avghgt, hgt, pow3d, powxy, powax
+USE mdat,  ONLY : FNXY, l02, l3d, iedterr, nz, nxy, ndat, avghgt, hgt, pow3d, powxy, powax, objcn, plotobj
 
 IMPLICIT NONE
 
@@ -10,7 +10,7 @@ INTEGER :: iobj, ixy, iz
 REAL :: totpow, rnrm
 ! ------------------------------------------------
 
-IF (iedterr .GT. 0) RETURN ! Unstr.
+IF (objcn(plotobj).NE.'MC' .AND. iedterr.GT.0) RETURN ! Unstr.
 
 DO iobj = 1, 2
   IF (iobj.EQ.2 .AND. .NOT.l02) EXIT

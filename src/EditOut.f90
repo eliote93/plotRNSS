@@ -286,7 +286,7 @@ END IF
 SUBROUTINE editerr(ierr)
 
 USE param, ONLY : TRUE, FALSE, io1, io2, ERRABS, ERRREL, DALLR, BLANK, oneline, probe
-USE mdat,  ONLY : lerr, l3d, iedterr, objfn, plotobj, aoF2F, nxy, nz, drho, powerr
+USE mdat,  ONLY : lerr, l3d, iedterr, objfn, plotobj, aoF2F, nxy, nz, drho, powerr, objcn, cbnch
 
 IMPLICIT NONE
 
@@ -296,17 +296,33 @@ CHARACTER*100 :: locfn, gn
 CHARACTER*1000 :: tmpline
 ! ------------------------------------------------
 
-IF (iedterr .EQ. 0) RETURN
+IF (iedterr .NE. 1) RETURN
 IF (.NOT. lerr) RETURN
 
+! OPEN : OUT
 indev = io2
 SELECT CASE (ierr)
-CASE (ERRABS); WRITE (locfn, '(A, A8)') 'RNSS\' // trim(objfn(plotobj)), '_abs.out'
+CASE (ERRABS); WRITE (locfn, '(A, A8)') 'RNSS\' // trim(objfn(plotobj)), '_abs.out' ! Fixed for MC
 CASE (ERRREL); WRITE (locfn, '(A, A8)') 'RNSS\' // trim(objfn(plotobj)), '_rel.out'
 END SELECT
 
 CALL openfile(indev, FALSE, locfn)
 
+! OPEN : INP
+IF (objcn(plotobj) .EQ. 'MC') THEN
+  IF (cbnch .EQ. 'S3') THEN
+    gn = 'RNSS\TPN UC Regular.out'
+  ELSE
+    CALL terminate("McCARD ERR EDIT BENCH")
+  END IF
+ELSE
+  gn = 'RNSS\' // trim(objfn(plotobj)) // '.out'
+END IF
+
+jndev = io1
+CALL openfile(jndev, TRUE, gn)
+
+! Basic
 WRITE (indev, '(3X,  A8, X, F)') 'grid_hex', aoF2F(plotobj)
 WRITE (indev, '(10X, A5, X, I)') 'K-eff',    drho
 
@@ -318,9 +334,6 @@ IF (.NOT. l3d) THEN
 END IF
 
 WRITE (indev, '(/A)') '$  1 Assembly Radial 2-D Power Distribution'
-jndev = io1
-gn    = 'RNSS\' // trim(objfn(plotobj)) // '.out'
-CALL openfile(jndev, TRUE, gn)
 
 DO
   READ (jndev, '(A1000)', END = 1000) oneline

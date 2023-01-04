@@ -56,14 +56,16 @@ ELSE IF (cbnch(1:9) .EQ. 'V4_CHAO95') THEN
     gcf2d = [500, 100, 1100, 850]
     gca2d = [0.13, 0.112, 0.727, 0.89]
   END IF
-ELSE IF (cbnch(1:10) .EQ. 'S3') THEN
+ELSE IF (cbnch(1:2) .EQ. 'S3') THEN
   IF (lerr) THEN
     xstr2d  =  50
     ystr2d  = -95
     nsize2d =  25
     
-    gcf2d = [500, 100, 1080, 890]
-    gca2d = [0.11, 0.128, 0.77, 0.85]
+    !gcf2d = [500, 100, 1080, 890]
+    !gca2d = [0.11, 0.128, 0.77, 0.85]
+    gcf2d = [500, 100, 1040, 890]
+    gca2d = [0.11, 0.128, 0.79, 0.85]
   ELSE
     xstr2d  =  50
     ystr2d  = -95

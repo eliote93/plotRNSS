@@ -170,9 +170,9 @@ l3d = nz .GT. 1
 IF (.NOT. associated(hgt)) CALL dmalloc1(hgt, 1)
 avghgt = sum(hgt(1:nz)) / nz
 
-nerr = 1
-IF (lerr) nerr = 2
-IF (iedterr .GT. 0) nerr = 1
+nerr = 1 ! ABS
+IF (lerr) nerr = 2 ! ABS, REL
+IF (iedterr .GT. 0) nerr = 1 ! ABS
 ! ------------------------------------------------
 
 END SUBROUTINE fininp
