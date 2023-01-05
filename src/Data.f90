@@ -46,11 +46,13 @@ INTEGER, DIMENSION(0:FNV, FNX, 2) :: izp = FALSE ! (ii, iy, iobj), ii = 0 : # of
 INTEGER, DIMENSION(6, FNXY) :: inghasy
 ! ------------------------------------------------
 REAL :: avghgt   ! Average Plane Height [cm]
-REAL :: xylim    ! Legend for 2-D Assembly Power Distribution
-REAL :: zlim     ! Legend for 1-D Plane    Power Distribution
 REAL :: xyztotpf ! Peaking Factor for 3-D Assembly Power
 REAL :: axpf     ! Peaking Factor for 1-D Plane    Power
 REAL :: ystr1d
+REAL :: xylmin    ! Minimum Legend for 2-D Assembly Power Distribution
+REAL :: xylmax    ! Maximum Legend for 2-D Assembly Power Distribution
+REAL :: zlmin     ! Minimum Legend for 1-D Plane    Power Distribution
+REAL :: zlmax     ! Maximum Legend for 1-D Plane    Power Distribution
 
 REAL, DIMENSION(2) :: aoF2F     ! (iobj), Assembly Flat-to-flat [cm]
 REAL, DIMENSION(2) :: xyztotmax ! (iobj), Maximum Error for 3-D Assembly Power

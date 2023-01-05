@@ -41,8 +41,8 @@ END SUBROUTINE printout
 ! --------------------------------------------------------------------------------------------------
 SUBROUTINE editinfo()
 
-USE param, ONLY : FALSE, DOT, io1, io2, oneline, probe, ERRABS
-USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, xylim, zlim, xstr2d, ystr2d, nsize2d, gcf2d, gca2d, xstr1d, ystr1d, nsize1d, gcf1d, gca1d, powerr
+USE param, ONLY : FALSE, DOT, io1, io2, oneline, probe, ERRABS, ZERO, EPS7
+USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, xylmin, xylmax, zlmin, zlmax, xstr2d, ystr2d, nsize2d, gcf2d, gca2d, xstr1d, ystr1d, nsize1d, gcf1d, gca1d, powerr
 
 IMPLICIT NONE
 
@@ -81,11 +81,13 @@ ELSE
   nn = 1
 END IF
 
-IF (xylim .LT. 0) THEN
+IF (xylmax .LT. EPS7) THEN
   IF (lerr) THEN
-    xylim = max(maxval(powerr(1:nxy(plotobj), 1:nz, ERRABS)), abs(minval(powerr(1:nxy(plotobj), 1:nz, ERRABS)))) ! Fixed
+    xylmax = max(maxval(powerr(1:nxy(plotobj), 1:nz, ERRABS)), abs(minval(powerr(1:nxy(plotobj), 1:nz, ERRABS)))) ! Fixed
+    xylmin = -xylmax
   ELSE
-    xylim = maxval(powerr(1:nxy(plotobj), 1:nz, 1))
+    xylmax = maxval(powerr(1:nxy(plotobj), 1:nz, 1))
+    xylmin = ZERO
   END IF
 END IF
 
@@ -94,7 +96,7 @@ WRITE (indev, '(A9, X, 2L6, A27)') "LOGICAL",   lerr, l3d,               " ! err
 WRITE (indev, '(A9, X, 3I6, A19)') "String",    xstr2d, ystr2d, nsize2d, " ! x, y, size"
 WRITE (indev, '(A9, X, 4I6)')      "GCF",       gcf2D(1:4)
 WRITE (indev, '(A9, X, 4F6.3)')    "GCA",       gca2D(1:4)
-WRITE (indev, '(A9, X, 2F6.1)')    "yMax",      xylim
+WRITE (indev, '(A9, X, 2F6.1)')    "Legend",    xylmin, xylmax
 
 IF (lerr) THEN
   WRITE (indev, '(A9, X, A31)')    "Label",     "Normalized Asy. Power Error (%)"
@@ -108,11 +110,21 @@ IF (l3d) THEN
   
   nn = 1 ! Manually Inputted
   
+  IF (zlmax .LT. EPS7) THEN
+    IF (lerr) THEN
+      zlmax = max(maxval(powerr(0, 1:nz, ERRABS)), abs(minval(powerr(0, 1:nz, ERRABS)))) ! Fixed
+      zlmin = -zlmax
+    ELSE
+      zlmax = maxval(powerr(0, 1:nz, 1))
+      zlmin = ZERO
+    END IF
+  END IF
+  
   WRITE (indev, '(A9, X, 2I6, A25)')          "# of Dat.", nz, nn,                  " ! Pln., Img."
   WRITE (indev, '(A9, X, I6, F6.3, I6, A19)') "String",    xstr1d, ystr1d, nsize1d, " ! x, y, size"
   WRITE (indev, '(A9, X, 4I6)')               "GCF",       gcf1D(1:4)
   WRITE (indev, '(A9, X, 4F6.3)')             "GCA",       gca1D(1:4)
-  WRITE (indev, '(A9, X, F6.3)')              "yMax",      zlim
+  WRITE (indev, '(A9, X, F6.3)')              "Legend",    zlmin, zlmax
   
   IF (lerr) THEN
     WRITE (indev, '(A9, X, A30)')    "Label",     "Normalized Pln. Power Eror (%)"

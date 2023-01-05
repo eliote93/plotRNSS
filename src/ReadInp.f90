@@ -32,7 +32,7 @@ SUBROUTINE readinp()
 
 USE allocs
 USE param, ONLY : DOT, BANG, BLANK, SLASH, TRUE, FALSE, ONE, oneline, probe, io1, ZERO
-USE mdat,  ONLY : l3d, l02, objcn, objfn, lerr, plotobj, xstr2d, ystr2d, nsize2d, xstr1d, ystr1d, nsize1d, gcf2d, gca2d, gcf1d, gca1d, nz, hgt, avghgt, xylim, zlim, aoF2F, nerr, iedterr, lbnch, cbnch, nMC
+USE mdat,  ONLY : l3d, l02, objcn, objfn, lerr, plotobj, xstr2d, ystr2d, nsize2d, xstr1d, ystr1d, nsize1d, gcf2d, gca2d, gcf1d, gca1d, nz, hgt, avghgt, xylmax, zlmax, aoF2F, nerr, iedterr, lbnch, cbnch, nMC
 
 IMPLICIT NONE
 
@@ -129,11 +129,11 @@ DO
     CALL dmalloc(hgt, nz)
     READ (oneline, *) cn, hgt(1:nz)
     
-  CASE ('XYLIM')
-    READ (oneline, *) cn, xylim
+  CASE ('XYLMAX')
+    READ (oneline, *) cn, xylmax
     
-  CASE ('ZLIM')
-    READ (oneline, *) cn, zlim
+  CASE ('ZLMAX')
+    READ (oneline, *) cn, zlmax
         
   CASE DEFAULT
     CALL terminate("READ INP")
@@ -152,8 +152,8 @@ END SUBROUTINE readinp
 SUBROUTINE fininp()
 
 USE allocs
-USE param, ONLY : MP
-USE mdat,  ONLY : l02, lerr, l3d, plotobj, nz, nerr, hgt, avghgt, iedterr, nMC
+USE param, ONLY : MP, ZERO
+USE mdat,  ONLY : l02, lerr, l3d, plotobj, nz, nerr, hgt, avghgt, iedterr, nMC, xylmin, xylmax, zlmin, zlmax
 
 IMPLICIT NONE
 ! ------------------------------------------------
@@ -173,6 +173,14 @@ avghgt = sum(hgt(1:nz)) / nz
 nerr = 1 ! ABS
 IF (lerr) nerr = 2 ! ABS, REL
 IF (iedterr .GT. 0) nerr = 1 ! ABS
+
+IF (lerr) THEN
+  xylmin = -xylmax
+  zlmin  = -zlmax
+ELSE
+  xylmin = ZERO
+  zlmin  = ZERO
+END IF
 ! ------------------------------------------------
 
 END SUBROUTINE fininp
