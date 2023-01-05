@@ -18,7 +18,7 @@ CALL fininp
 CALL readobj(1)
 CALL readobj(2)
 CALL adjmc
-CALL normpow
+CALL adjpow
 CALL chkobj
 
 CALL setgeo

@@ -1,4 +1,7 @@
-SUBROUTINE normpow()
+SUBROUTINE adjpow()
+! Given Asy. Power = J/Vol.
+! Avg. Power = sum(Asy. Power) / # of Asy.
+! ADJ : Each Asy. Power / Avg. Power
 ! DO NOT Integrate 3-D Assembly Power into 2-D Assembly Power nor 1-D Plane Power
 
 USE param, ONLY : EPS7, ZERO
@@ -7,10 +10,10 @@ USE mdat,  ONLY : FNXY, l02, l3d, iedterr, nz, nxy, ndat, avghgt, hgt, pow3d, po
 IMPLICIT NONE
 
 INTEGER :: iobj, ixy, iz
-REAL :: totpow, rnrm
+REAL :: totpow, avgpow
 ! ------------------------------------------------
 
-IF (objcn(plotobj).NE.'MC' .AND. iedterr.GT.0) RETURN ! Unstr.
+IF (iedterr .EQ. 2) RETURN
 
 DO iobj = 1, 2
   IF (iobj.EQ.2 .AND. .NOT.l02) EXIT
@@ -22,19 +25,19 @@ DO iobj = 1, 2
     totpow = sum(pow3d(:, :, iobj))
   END IF
   
-  rnrm = real(ndat(iobj)) / totpow
+  avgpow = totpow / real(ndat(iobj))
   IF (.NOT. l3d) THEN
-    pow3d(:, :, iobj) = pow3d(:, :, iobj)*rnrm
+    pow3d(:, :, iobj) = pow3d(:, :, iobj) / avgpow
   ELSE
     DO iz = 1, nz
-      pow3d(:, iz, iobj) = pow3d(:, iz, iobj)*rnrm*avghgt / hgt(iz) ! Volume-wise Power
+      pow3d(:, iz, iobj) = pow3d(:, iz, iobj)*avghgt / avgpow / hgt(iz) ! Volume-wise Power
     END DO
   END IF
   
   ! 2D
   totpow = sum(powxy(:, iobj))
-  rnrm   = real(nxy(iobj)) / totpow
-  powxy(:, iobj) = powxy(:, iobj)*rnrm
+  avgpow = totpow / real(nxy(iobj))
+  powxy(:, iobj) = powxy(:, iobj) / avgpow
   
   ! 1D : Already Normalized
   DO iz = 1, nz
@@ -42,11 +45,11 @@ DO iobj = 1, 2
   END DO
   
   totpow = sum(powax(:, iobj))
-  rnrm   = real(nz) / totpow
+  avgpow = totpow / real(nz)
   DO iz = 1, nz
-    powax(iz, iobj) = powax(iz, iobj)*rnrm*avghgt / hgt(iz) ! Volume-wise to Point-wise
+    powax(iz, iobj) = powax(iz, iobj)*avghgt / avgpow / hgt(iz) ! Volume-wise to Point-wise
   END DO
 END DO
 ! ------------------------------------------------
 
-END SUBROUTINE normpow
+END SUBROUTINE adjpow

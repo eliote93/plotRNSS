@@ -1,7 +1,8 @@
-ID_01        RN / TPN UC Regular
-plot_Err     F  1 ! Err. = plot obj - other obj
-edit_Err     2 ! 1 : Make .out / 2 : Plot .out
-xylmax       3. ! -1 : Auto
+ID_01        RN / TPN LC Regular
+ID_02        RN / TPN LC Deformed RX000
+plot_Err     T  2 ! Err. = plot obj - other obj
+edit_Err     0 ! 1 : Make .out / 2 : Plot .out
+xylmax       2. ! -1 : Auto
 zlmax        3.
 bench        S3
 

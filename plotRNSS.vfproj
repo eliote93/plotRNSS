@@ -35,7 +35,7 @@
 		<File RelativePath=".\src\dmalloc.f90"/>
 		<File RelativePath=".\src\EditOut.f90"/>
 		<File RelativePath=".\src\Main.f90"/>
-		<File RelativePath=".\src\NormPow.f90"/>
+		<File RelativePath=".\src\AdjPow.f90"/>
 		<File RelativePath=".\src\param.f90"/>
 		<File RelativePath=".\src\PlotPow.f90"/>
 		<File RelativePath=".\src\ReadBench.f90"/>
