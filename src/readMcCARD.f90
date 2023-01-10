@@ -42,7 +42,7 @@ SUBROUTINE readMcCARD1st(iobj, keffloc, fn)
 
 USE allocs
 USE param, ONLY : TRUE, oneline, io1, EPS7, SQ3
-USE mdat,  ONLY : nxy, nz, ndat, pow3d, aoF2F
+USE mdat,  ONLY : nxy, nz, ndat, pow3d, aoF2F, vol3d
 
 IMPLICIT NONE
 
@@ -114,6 +114,8 @@ DO
   idat = idat + 1
   iz   = (idat-1) / nxy(iobj) + 1
   ixy  = idat - nxy(iobj)*(iz-1)
+  
+  READ (oneline(50:60), *) vol3d(ixy, iz, iobj)
   READ (oneline(87:98), *) pow3d(ixy, iz, iobj)
 END DO
 
@@ -189,11 +191,12 @@ END SUBROUTINE readMcCARD2nd
 SUBROUTINE adjMC()
 
 USE param, ONLY : ZERO
-USE mdat,  ONLY : FNX, FNV, l02, objcn, nxa, nya, nsfc, izp, pow3d, powxy, powax, nxy, nz
+USE mdat,  ONLY : FNX, FNV, l02, objcn, nxa, nya, nsfc, izp, pow3d, powxy, powax, nxy, nz, vol3d
 
 IMPLICIT NONE
 
 INTEGER :: ito, ifr, ixy, iz
+REAL :: locvol, locpow
 ! ------------------------------------------------
 
 IF (objcn(1).NE.'MC' .AND. objcn(2).NE.'MC') RETURN
@@ -216,15 +219,30 @@ IF (l02) THEN
     nxa(1:FNX, ito) = nxa(1:FNX, ifr)
     izp(0:FNV, 1:FNX, ito) = izp(0:FNV, 1:FNX, ifr)
     
-    ! 2-D Norm.
+    ! Vol. Avg.
     powxy(:, ito) = ZERO
     powax(:, ito) = ZERO
     
-    DO iz = 1, nz
-      DO ixy = 1, nxy(ito)
-        powxy(ixy, ito) = powxy(ixy, ito) + pow3d(ixy, iz, ito)
-        powax(iz,  ito) = powax(iz,  ito) + pow3d(ixy, iz, ito)
+    DO ixy = 1, nxy(ito)
+      locvol = ZERO
+      locpow = ZERO
+      DO iz = 1, nz
+        locpow = locpow + vol3d(ixy, iz, ito)*pow3d(ixy, iz, ito)
+        locvol = locvol + vol3d(ixy, iz, ito)
       END DO
+      
+      powxy(ixy, ito) = locpow / locvol
+    END DO
+    
+    DO iz = 1, nz
+      locvol = ZERO
+      locpow = ZERO
+      DO ixy = 1, nxy(ito)
+        locpow = locpow + vol3d(ixy, iz, ito)*pow3d(ixy, iz, ito)
+        locvol = locvol + vol3d(ixy, iz, ito)
+      END DO
+      
+      powax(iz, ito) = locpow / locvol
     END DO
   END IF
 ELSE
@@ -237,11 +255,12 @@ END SUBROUTINE adjMC
 SUBROUTINE adjMC_bench(ito)
 
 USE param, ONLY : ZERO
-USE mdat,  ONLY : lbnch, cbnch, FNX, FNV, l02, objcn, nxa, nya, nsfc, izp, pow3d, powxy, powax, nxy, nz
+USE mdat,  ONLY : lbnch, cbnch, FNX, FNV, l02, objcn, nxa, nya, nsfc, izp, pow3d, powxy, powax, nxy, nz, vol3d
 
 IMPLICIT NONE
 
 INTEGER :: ito, iz, ixy
+REAL :: locvol, locpow
 ! ------------------------------------------------
 
 IF (.NOT. lbnch) CALL terminate("McCARD ALONE W/O BENCH")
@@ -267,11 +286,27 @@ END IF
 ! 2-D Norm.
 powxy(:, ito) = ZERO
 powax(:, ito) = ZERO
-DO iz = 1, nz
-  DO ixy = 1, nxy(ito)
-    powxy(ixy, ito) = powxy(ixy, ito) + pow3d(ixy, iz, ito)
-    powax(iz,  ito) = powax(iz,  ito) + pow3d(ixy, iz, ito)
+
+DO ixy = 1, nxy(ito)
+  locvol = ZERO
+  locpow = ZERO
+  DO iz = 1, nz
+    locpow = locpow + vol3d(ixy, iz, ito)*pow3d(ixy, iz, ito)
+    locvol = locvol + vol3d(ixy, iz, ito)
   END DO
+  
+  powxy(ixy, ito) = locpow / locvol
+END DO
+
+DO iz = 1, nz
+  locvol = ZERO
+  locpow = ZERO
+  DO ixy = 1, nxy(ito)
+    locpow = locpow + vol3d(ixy, iz, ito)*pow3d(ixy, iz, ito)
+    locvol = locvol + vol3d(ixy, iz, ito)
+  END DO
+  
+  powax(iz, ito) = locpow / locvol
 END DO
 ! ------------------------------------------------
 

@@ -42,13 +42,15 @@ END SUBROUTINE printout
 SUBROUTINE editinfo()
 
 USE param, ONLY : FALSE, DOT, io1, io2, oneline, probe, ERRABS, ZERO, EPS7
-USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, xylmin, xylmax, zlmin, zlmax, xstr2d, ystr2d, nsize2d, gcf2d, gca2d, xstr1d, ystr1d, nsize1d, gcf1d, gca1d, powerr
+USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, xylmin, xylmax, zlmin, zlmax, xstr2d, ystr2d, nsize2d, gcf2d, gca2d, xstr1d, ystr1d, nsize1d, gcf1d, gca1d, powerr, iedterr
 
 IMPLICIT NONE
 
 INTEGER :: indev, jndev, nn
 CHARACTER*100 :: locfn
 ! ------------------------------------------------
+
+IF (iedterr .EQ. 2) RETURN
 
 ! Echo
 jndev = io1
@@ -142,7 +144,7 @@ END SUBROUTINE editinfo
 SUBROUTINE editgrid()
 
 USE param, ONLY : FALSE, HALF, ONE, ZERO, SQ3, DOT, io2
-USE mdat,  ONLY : l3d, nxy, nz, objfn, plotobj, aoF2F, hgt, cntxy, lptb, optb
+USE mdat,  ONLY : l3d, nxy, nz, objfn, plotobj, aoF2F, hgt, cntxy, lptb, optb, iedterr
 
 IMPLICIT NONE
 
@@ -152,6 +154,8 @@ REAL :: aoPch
 REAL, DIMENSION(6) :: x0, y0, x1, y1
 CHARACTER*100 :: locfn
 ! ------------------------------------------------
+
+IF (iedterr .EQ. 2) RETURN
 
 indev = io2
 WRITE (locfn, '(A, A5)') trim(objfn(plotobj)), '.grid'
@@ -203,7 +207,7 @@ END SUBROUTINE editgrid
 SUBROUTINE editout(ierr)
 
 USE param, ONLY : FALSE, MP, DOT, BLANK, ERRABS, ERRREL, io2
-USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, xyzpf, xyzmax, xyzrms, axpf, axmax, axrms, powerr, powax
+USE mdat,  ONLY : l3d, objfn, objcn, plotobj, nz, nxy, lerr, xyzpf, xyzmax, xyzrms, axpf, axmax, axrms, powerr, powax, iedterr
 
 IMPLICIT NONE
 
@@ -211,6 +215,8 @@ INTEGER :: indev, ixy, iz, istz, istxy, iedxy, iquo, refobj, ierr
 INTEGER, PARAMETER :: NLGH = 100
 CHARACTER*100 :: locfn
 ! ------------------------------------------------
+
+IF (iedterr .EQ. 2) RETURN
 
 indev = io2
 

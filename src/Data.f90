@@ -67,6 +67,7 @@ REAL, DIMENSION(4) :: gca2d, gca1d
 REAL, DIMENSION(      FNZ, 2) :: powax ! (iz,      iobj), 1-D Plane Power
 REAL, DIMENSION(     FNXY, 2) :: powxy ! (ixy,     iobj), 2-D Assembly Power
 REAL, DIMENSION(FNXY, FNZ, 2) :: pow3d ! (ixy, iz, iobj), 3-D Assembly Power
+REAL, DIMENSION(FNXY, FNZ, 2) :: vol3d ! (ixy, iz, iobj), 3-D Assembly Volume
 
 REAL, DIMENSION(2, FNXY) :: cntxy ! (x/y, ixy), Coordinates of Radial Assembly
 
