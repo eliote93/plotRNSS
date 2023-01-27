@@ -1,0 +1,1 @@
+plotRNSS.exe ./batch_inp/UC_01.inp

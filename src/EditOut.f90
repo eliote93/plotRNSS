@@ -1,7 +1,7 @@
 ! --------------------------------------------------------------------------------------------------
 SUBROUTINE printout(ierr)
 
-USE param, ONLY : ERRABS, ERRREL
+USE param, ONLY : ERRABS, ERRREL, io3
 USE mdat, ONLY : l3d, lerr, xyztotmax, xyztotrms, xyztotpf, xymax, xyrms, xyzpf, axmax, axrms, axpf
 
 IMPLICIT NONE
@@ -19,22 +19,36 @@ IF (lerr) THEN
   IF (l3d) THEN
     WRITE (*, '(A36, F7.2, X, A3)') '3-D Power ' // ctmp // ' Error Max. : ', xyztotmax(ierr), '(%)'
     WRITE (*, '(A36, F7.2, X, A3)') '3-D Power ' // ctmp // ' Error RMS  : ', xyztotrms(ierr), '(%)'
+    
+    WRITE (io3, '(A36, F7.2, X, A3)') '3-D Power ' // ctmp // ' Error Max. : ', xyztotmax(ierr), '(%)'
+    WRITE (io3, '(A36, F7.2, X, A3)') '3-D Power ' // ctmp // ' Error RMS  : ', xyztotrms(ierr), '(%)'
   END IF
   
   WRITE (*, '(A36, F7.2, X, A3)') '2-D Power ' // ctmp // ' Error Max. : ', xymax(ierr), '(%)'
   WRITE (*, '(A36, F7.2, X, A3)') '2-D Power ' // ctmp // ' Error RMS  : ', xyrms(ierr), '(%)'
   
+  WRITE (io3, '(A36, F7.2, X, A3)') '2-D Power ' // ctmp // ' Error Max. : ', xymax(ierr), '(%)'
+  WRITE (io3, '(A36, F7.2, X, A3)') '2-D Power ' // ctmp // ' Error RMS  : ', xyrms(ierr), '(%)'
+  
   IF (l3d) THEN
     WRITE (*, '(A36, F7.2, X, A3)') '1-D Power ' // ctmp // ' Error Max. : ', axmax(ierr), '(%)'
     WRITE (*, '(A36, F7.2, X, A3)') '1-D Power ' // ctmp // ' Error RMS  : ', axrms(ierr), '(%)'
+    
+    WRITE (io3, '(A36, F7.2, X, A3)') '1-D Power ' // ctmp // ' Error Max. : ', axmax(ierr), '(%)'
+    WRITE (io3, '(A36, F7.2, X, A3)') '1-D Power ' // ctmp // ' Error RMS  : ', axrms(ierr), '(%)'
   END IF
 ELSE
   IF (l3d) WRITE (*, '(A27, F7.2)') '3-D Power Peaking Factor : ', xyztotpf
            WRITE (*, '(A27, F7.2)') '2-D Power Peaking Factor : ', xyzpf(0)
   IF (l3d) WRITE (*, '(A27, F7.2)') '1-D Power Peaking Factor : ', axpf
+  
+  IF (l3d) WRITE (io3, '(A27, F7.2)') '3-D Power Peaking Factor : ', xyztotpf
+           WRITE (io3, '(A27, F7.2)') '2-D Power Peaking Factor : ', xyzpf(0)
+  IF (l3d) WRITE (io3, '(A27, F7.2)') '1-D Power Peaking Factor : ', axpf
 END IF
 
 WRITE (*,*)
+WRITE (io3,*)
 ! ------------------------------------------------
 
 END SUBROUTINE printout
@@ -50,7 +64,7 @@ INTEGER :: indev, jndev, nn
 CHARACTER*100 :: locfn
 ! ------------------------------------------------
 
-IF (iedterr .EQ. 2) RETURN
+IF (iedterr .EQ. 1) RETURN
 
 ! Echo
 jndev = io1
@@ -155,7 +169,7 @@ REAL, DIMENSION(6) :: x0, y0, x1, y1
 CHARACTER*100 :: locfn
 ! ------------------------------------------------
 
-IF (iedterr .EQ. 2) RETURN
+IF (iedterr .EQ. 1) RETURN
 
 indev = io2
 WRITE (locfn, '(A, A5)') trim(objfn(plotobj)), '.grid'
@@ -216,7 +230,7 @@ INTEGER, PARAMETER :: NLGH = 100
 CHARACTER*100 :: locfn
 ! ------------------------------------------------
 
-IF (iedterr .EQ. 2) RETURN
+IF (iedterr .EQ. 1) RETURN
 
 indev = io2
 

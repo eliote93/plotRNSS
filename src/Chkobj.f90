@@ -1,6 +1,6 @@
 SUBROUTINE chkobj()
 
-USE param, ONLY : EPS7, MP
+USE param, ONLY : EPS7, MP, io3
 USE mdat,  ONLY : FNXY, lerr, ldfrm, l3d, nxa, nya, nxy, plotobj, izp, aoF2F, keff, ndfrm, drho, iedterr
 
 IMPLICIT NONE
@@ -38,11 +38,19 @@ IF (iedterr .EQ. 2) THEN
   WRITE (*, '(18X, A17, I5)')       'Reference drho : ',    int(keff(MP(plotobj)))
   WRITE (*, '(18X, A17, I5)')       'Test      drho : ',    int(keff(plotobj))
   WRITE (*, '(12X, A18, I5, X, A5/)') 'drho Difference : ', drho, '(pcm)'
+  
+  WRITE (io3, '(18X, A17, I5)')       'Reference drho : ',    int(keff(MP(plotobj)))
+  WRITE (io3, '(18X, A17, I5)')       'Test      drho : ',    int(keff(plotobj))
+  WRITE (io3, '(12X, A18, I5, X, A5/)') 'drho Difference : ', drho, '(pcm)'
 ELSE
   drho = int(100000.*(1./keff(MP(plotobj)) - 1./keff(plotobj)))
   WRITE (*, '(18X, A18, F7.5)')       'Reference k-eff : ',       keff(MP(plotobj))
   WRITE (*, '(18X, A18, F7.5)')       'Test      k-eff : ',       keff(plotobj)
   WRITE (*, '(12X, A24, I5, X, A5/)') 'Reactivity Difference : ', drho, '(pcm)'
+  
+  WRITE (io3, '(18X, A18, F7.5)')       'Reference k-eff : ',       keff(MP(plotobj))
+  WRITE (io3, '(18X, A18, F7.5)')       'Test      k-eff : ',       keff(plotobj)
+  WRITE (io3, '(12X, A24, I5, X, A5/)') 'Reactivity Difference : ', drho, '(pcm)'
 END IF
 ! ------------------------------------------------
 

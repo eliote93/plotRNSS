@@ -1,15 +1,16 @@
 ! --------------------------------------------------------------------------------------------------
 SUBROUTINE openinp()
 
-USE param, ONLY : io1
+USE param, ONLY : DOT, SLASH, io1, io3
 USE mdat,  ONLY : inpfn
 
 IMPLICIT NONE
 
-INTEGER :: indev, narg, ichar1st
+INTEGER :: indev, narg, ichar1st, nlgh, ist, ied
 LOGICAL :: lext
 ! ------------------------------------------------
 
+! GET : fn.inp
 narg = iargc()
 IF (narg .EQ. 1) THEN ! User Inputted
   CALL getarg(narg, inpfn)
@@ -21,9 +22,22 @@ ELSE ! Default
   inpfn = 'plotRNSS.inp'
 END IF
 
+! OPEN : inp
 INQUIRE (FILE = inpfn, EXIST = lext)
 IF (.NOT. lext) CALL terminate("FILE DOES NOT EXIST - " // inpfn)
 OPEN (io1, FILE = inpfn)
+
+! GET : fn
+nlgh = len_trim(inpfn)
+DO ied = nlgh, 1, -1
+  IF (inpfn(ied:ied) .EQ. DOT) EXIT
+END DO
+DO ist = ied-1, 1, -1
+  IF (inpfn(ist:ist) .EQ. SLASH) EXIT
+END DO
+
+! OPEN : summ
+OPEN (io3, FILE = './out/' // inpfn(ist+1:ied-1) // '.out')
 ! ------------------------------------------------
 
 END SUBROUTINE openinp

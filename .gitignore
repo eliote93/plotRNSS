@@ -3,6 +3,8 @@ INP/
 lib/
 x64/
 Intel/
+batch_inp/
+out/
 
 # library
 *.XSL
@@ -17,3 +19,4 @@ tpfh2o
 *.vtk
 *.rst
 *.exe
+batch.bat
