@@ -5,16 +5,11 @@ IMPLICIT NONE
 
 CHARACTER   :: errmesg*(*)
 CHARACTER*6 :: stars
-! ------------------------------------------------
-
 DATA stars/'#####'/
 
-PRINT '(A, A)', stars, errmesg
+PRINT '(A, A)', stars, trim(errmesg)
 PRINT '(A, A)', stars, "Abnormal Termination"
-
-PAUSE
 STOP
-! ------------------------------------------------
 
 END SUBROUTINE terminate
 ! --------------------------------------------------------------------------------------------------

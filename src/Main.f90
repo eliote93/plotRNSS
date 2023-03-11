@@ -7,7 +7,7 @@ IMPLICIT NONE
 
 INTEGER :: ierr
 
-fdir = 'C:\Users\user\Documents\MATLAB\'
+fdir = 'C:\Users\rpl 6\Documents\MATLAB\'
 
 CALL default
 CALL openinp
