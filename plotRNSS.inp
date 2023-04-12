@@ -1,8 +1,8 @@
-ID_01        RN / MC LC RX 000 02_abs
-ID_02        RN / TPN LC RX 000 02_abs
+ID_01        RN / TPN UC Regular
+ID_02        RN / TPN UC Deformed RX100
 plot_Err     T  2 ! Err. = plot obj - other obj
-edit_Err     2 ! 1 : Make .out / 2 : Plot .out
-xylmax       2. ! -1 : Auto
+edit_Err     0 ! 1 : Make del / 2 : Plot del
+xylmax       4. ! -1 : Auto
 zlmax        3.
 bench        S3
 

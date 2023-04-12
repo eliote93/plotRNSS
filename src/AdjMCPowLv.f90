@@ -1,4 +1,4 @@
-SUBROUTINE adjpow()
+SUBROUTINE adjmcpowlv()
 ! Given Asy. Power = J/Vol.
 ! Avg. Power = sum(Asy. Power) / # of Asy.
 ! ADJ : Each Asy. Power / Avg. Power
@@ -47,4 +47,4 @@ tst1 = sum(powxy(:, 1))
 tst2 = sum(powxy(:, 2))
 ! ------------------------------------------------
 
-END SUBROUTINE adjpow
+END SUBROUTINE adjmcpowlv

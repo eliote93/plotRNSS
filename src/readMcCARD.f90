@@ -188,7 +188,7 @@ CLOSE (indev) ! 1
 
 END SUBROUTINE readMcCARD2nd
 ! --------------------------------------------------------------------------------------------------
-SUBROUTINE adjMC()
+SUBROUTINE setmcpow1d2d()
 
 USE param, ONLY : ZERO
 USE mdat,  ONLY : FNX, FNV, l02, objcn, nxa, nya, nsfc, izp, pow3d, powxy, powax, nxy, nz, vol3d
@@ -203,8 +203,8 @@ IF (objcn(1).NE.'MC' .AND. objcn(2).NE.'MC') RETURN
 
 IF (l02) THEN
   IF (objcn(1).EQ.'MC' .AND. objcn(2).EQ.'MC') THEN
-    CALL adjMC_bench(1)
-    CALL adjMC_bench(2)
+    CALL setmcpow_bench(1)
+    CALL setmcpow_bench(2)
   ELSE
     IF (objcn(1).EQ.'MC') THEN
       ito = 1
@@ -246,13 +246,13 @@ IF (l02) THEN
     END DO
   END IF
 ELSE
-  CALL adjMC_bench(1)
+  CALL setmcpow_bench(1)
 END IF
 ! ------------------------------------------------
 
-END SUBROUTINE adjMC
+END SUBROUTINE setmcpow1d2d
 ! --------------------------------------------------------------------------------------------------
-SUBROUTINE adjMC_bench(ito)
+SUBROUTINE setmcpow_bench(ito)
 
 USE param, ONLY : ZERO
 USE mdat,  ONLY : lbnch, cbnch, FNX, FNV, l02, objcn, nxa, nya, nsfc, izp, pow3d, powxy, powax, nxy, nz, vol3d
@@ -310,5 +310,5 @@ DO iz = 1, nz
 END DO
 ! ------------------------------------------------
 
-END SUBROUTINE adjMC_bench
+END SUBROUTINE setmcpow_bench
 ! --------------------------------------------------------------------------------------------------
