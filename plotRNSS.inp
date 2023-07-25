@@ -1,10 +1,10 @@
-ID_01        RN / TPN UC Regular
-ID_02        RN / TPN UC Deformed RX100
+ID_01        RN / Regular
+ID_02        RN / Asy.-wise R01 A01 E3 RX 050
 plot_Err     T  2 ! Err. = plot obj - other obj
-edit_Err     0 ! 1 : Make del / 2 : Plot del
-xylmax       4. ! -1 : Auto
-zlmax        3.
-bench        S3
+edit_Err     0 ! 1 : Edit Change Err. / 2 : Plot Change Err.
+xylmax       -1 ! -1 : Auto
+zlmax        1.
+bench        S3_3D
 
 !tpos_2d     47 -55
 !tsize_2d    20

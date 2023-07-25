@@ -46,7 +46,7 @@ SUBROUTINE readinp()
 
 USE allocs
 USE param, ONLY : DOT, BANG, BLANK, SLASH, TRUE, FALSE, ONE, oneline, probe, io1, ZERO
-USE mdat,  ONLY : l3d, l02, objcn, objfn, lerr, plotobj, xstr2d, ystr2d, nsize2d, xstr1d, ystr1d, nsize1d, gcf2d, gca2d, gcf1d, gca1d, nz, hgt, avghgt, xylmax, zlmax, aoF2F, nerr, iedterr, lbnch, cbnch, nMC
+USE mdat,  ONLY : l02, objcn, objfn, lerr, plotobj, xstr2d, ystr2d, nsize2d, xstr1d, ystr1d, nsize1d, gcf2d, gca2d, gcf1d, gca1d, nz, hgt, avghgt, xylmax, zlmax, aoF2F, nerr, iedterr, lbnch, cbnch, nMC
 
 IMPLICIT NONE
 
@@ -192,8 +192,8 @@ IF (lerr) THEN
   xylmin = -xylmax
   zlmin  = -zlmax
 ELSE
-  xylmin = ZERO
-  zlmin  = ZERO
+  xylmin = 0
+  zlmin  = 0
 END IF
 ! ------------------------------------------------
 

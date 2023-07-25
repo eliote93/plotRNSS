@@ -49,10 +49,11 @@ REAL :: avghgt   ! Average Plane Height [cm]
 REAL :: xyztotpf ! Peaking Factor for 3-D Assembly Power
 REAL :: axpf     ! Peaking Factor for 1-D Plane    Power
 REAL :: ystr1d
-REAL :: xylmin    ! Minimum Legend for 2-D Assembly Power Distribution
-REAL :: xylmax    ! Maximum Legend for 2-D Assembly Power Distribution
-REAL :: zlmin     ! Minimum Legend for 1-D Plane    Power Distribution
-REAL :: zlmax     ! Maximum Legend for 1-D Plane    Power Distribution
+
+INTEGER :: xylmin    ! Minimum Legend for 2-D Assembly Power Distribution
+INTEGER :: xylmax    ! Maximum Legend for 2-D Assembly Power Distribution
+INTEGER :: zlmin     ! Minimum Legend for 1-D Plane    Power Distribution
+INTEGER :: zlmax     ! Maximum Legend for 1-D Plane    Power Distribution
 
 REAL, DIMENSION(2) :: aoF2F     ! (iobj), Assembly Flat-to-flat [cm]
 REAL, DIMENSION(2) :: xyztotmax ! (iobj), Maximum Error for 3-D Assembly Power

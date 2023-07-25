@@ -97,22 +97,36 @@ ELSE
   nn = 1
 END IF
 
-IF (xylmax .LT. EPS7) THEN
+IF (xylmax .LE. 0) THEN
   IF (lerr) THEN
-    xylmax = max(maxval(powerr(1:nxy(plotobj), 1:nz, ERRABS)), abs(minval(powerr(1:nxy(plotobj), 1:nz, ERRABS)))) ! Fixed
+    IF (l3d) THEN
+      xylmax = ceiling(max(maxval(powerr(1:nxy(plotobj), 0, ERRABS)), abs(minval(powerr(1:nxy(plotobj), 0, ERRABS))))) ! Fixed
+    ELSE
+      xylmax = ceiling(max(maxval(powerr(1:nxy(plotobj), 1, ERRABS)), abs(minval(powerr(1:nxy(plotobj), 1, ERRABS))))) ! Fixed
+    END IF
+    
+    xylmax = max(xylmax, 1)
     xylmin = -xylmax
   ELSE
-    xylmax = maxval(powerr(1:nxy(plotobj), 1:nz, 1))
-    xylmin = ZERO
+    IF (l3d) THEN
+      xylmax = int(maxval(powerr(1:nxy(plotobj), 0, 1)))
+    ELSE
+      xylmax = int(maxval(powerr(1:nxy(plotobj), 1, 1)))
+    END IF
+    
+    xylmax = max(xylmax, 1)
+    xylmin = 0
   END IF
 END IF
 
-WRITE (indev, '(A9,  X, 2I6, A25)') "# of Dat.", nxy(plotobj), nn,        " ! Asy., Img."
-WRITE (indev, '(A9,  X, 2L6, A27)') "LOGICAL",   lerr, l3d,               " ! err, rel, 3d"
-WRITE (indev, '(A9,  X, 3I6, A19)') "String",    xstr2d, ystr2d, nsize2d, " ! x, y, size"
-WRITE (indev, '(A9,  X, 4I6)')      "GCF",       gcf2D(1:4)
-WRITE (indev, '(A9, 3X, 4F6.3)')    "GCA",       gca2D(1:4)
-WRITE (indev, '(A9, 2X, 2F6.1)')    "Legend",    xylmin, xylmax
+CALL setbench_rad()
+
+WRITE (indev, '(A9,  X, 2I6, A25)')  "# of Dat.", nxy(plotobj), nn,        " ! Asy., Img."
+WRITE (indev, '(A9,  X, 2L6, A27)')  "LOGICAL",   lerr, l3d,               " ! err, rel, 3d"
+WRITE (indev, '(A9,  X, 3I6, A19)')  "String",    xstr2d, ystr2d, nsize2d, " ! x, y, size"
+WRITE (indev, '(A9,  X, 4I6)')       "GCF",       gcf2D(1:4)
+WRITE (indev, '(A9, 3X, 4F6.3)')     "GCA",       gca2D(1:4)
+WRITE (indev, '(A9, 2X, 2(4X, I2))') "Legend",    xylmin, xylmax
 
 IF (lerr) THEN
   WRITE (indev, '(A9, 4X, A20)')    "Label",     "Asy. Power Error (%)"
@@ -126,24 +140,28 @@ IF (l3d) THEN
   
   nn = 1 ! Manually Inputted
   
-  IF (zlmax .LT. EPS7) THEN
+  IF (zlmax .LE. 0) THEN
     IF (lerr) THEN
-      zlmax = max(maxval(powerr(0, 1:nz, ERRABS)), abs(minval(powerr(0, 1:nz, ERRABS)))) ! Fixed
+      zlmax = ceiling(max(maxval(powerr(0, 1:nz, ERRABS)), abs(minval(powerr(0, 1:nz, ERRABS))))) ! Fixed\
+      zlmax = max(zlmax, 1)
       zlmin = -zlmax
     ELSE
-      zlmax = maxval(powerr(0, 1:nz, 1))
-      zlmin = ZERO
+      zlmax = ceiling(maxval(powerr(0, 1:nz, 1)))
+      zlmax = max(zlmax, 1)
+      zlmin = 0
     END IF
   END IF
+  
+  CALL setbench_ax()
   
   WRITE (indev, '(A9,  X, 2I6, A25)')          "# of Dat.", nz, nn,                  " ! Pln., Img."
   WRITE (indev, '(A9,  X, I6, F6.3, I6, A19)') "String",    xstr1d, ystr1d, nsize1d, " ! x, y, size"
   WRITE (indev, '(A9,  X, 4I6)')               "GCF",       gcf1D(1:4)
   WRITE (indev, '(A9, 3X, 4F6.3)')             "GCA",       gca1D(1:4)
-  WRITE (indev, '(A9, 2X, F6.3)')              "Legend",    zlmin, zlmax
+  WRITE (indev, '(A9, 2X, 2(4X, I2))')         "Legend",    zlmin, zlmax
   
   IF (lerr) THEN
-    WRITE (indev, '(A9, 4X, A19)')    "Label",     "Pln. Power Eror (%)"
+    WRITE (indev, '(A9, 4X, A20)')    "Label",     "Pln. Power Error (%)"
   ELSE
     WRITE (indev, '(A9, 4X, A21)')    "Label",     "Normalized Pln. Power"
   END IF

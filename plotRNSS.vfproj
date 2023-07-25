@@ -27,23 +27,27 @@
 		<Filter Name="Header Files" Filter="fi;fd;h;inc"/>
 		<Filter Name="Resource Files" Filter="rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe"/>
 		<Filter Name="Source Files" Filter="f90;for;f;fpp;ftn;def;odl;idl">
+		<Filter Name="Data">
+		<File RelativePath=".\src\bench.f90"/>
+		<File RelativePath=".\src\data.f90"/>
+		<File RelativePath=".\src\default.f90"/>
+		<File RelativePath=".\src\param.f90"/></Filter>
+		<Filter Name="Basic">
+		<File RelativePath=".\src\dmalloc.f90"/>
+		<File RelativePath=".\src\main.f90"/>
+		<File RelativePath=".\src\util.f90"/></Filter>
+		<Filter Name="Out">
 		<File RelativePath=".\src\AdjMCPowLv.f90"/>
 		<File RelativePath=".\src\CalPowErr_3D.f90"/>
 		<File RelativePath=".\src\CalPowErr_Int.f90"/>
-		<File RelativePath=".\src\Chkobj.f90"/>
-		<File RelativePath=".\src\Data.f90"/>
-		<File RelativePath=".\src\default.f90"/>
-		<File RelativePath=".\src\dmalloc.f90"/>
 		<File RelativePath=".\src\EditOut.f90"/>
-		<File RelativePath=".\src\Main.f90"/>
-		<File RelativePath=".\src\param.f90"/>
 		<File RelativePath=".\src\PlotPow.f90"/>
-		<File RelativePath=".\src\ReadBench.f90"/>
+		<File RelativePath=".\src\SetGeo.f90"/></Filter>
+		<Filter Name="Read">
+		<File RelativePath=".\src\Chkobj.f90"/>
 		<File RelativePath=".\src\ReadInp.f90"/>
 		<File RelativePath=".\src\ReadMASTER_New.f90"/>
 		<File RelativePath=".\src\readMASTER_Old.f90"/>
 		<File RelativePath=".\src\readMcCARD.f90"/>
-		<File RelativePath=".\src\ReadRNSS.f90"/>
-		<File RelativePath=".\src\SetGeo.f90"/>
-		<File RelativePath=".\src\Util.f90"/></Filter></Files>
+		<File RelativePath=".\src\ReadRNSS.f90"/></Filter></Filter></Files>
 	<Globals/></VisualStudioProject>

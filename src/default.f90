@@ -7,10 +7,10 @@ IMPLICIT NONE
 
 nz      = 1
 l02     = FALSE
-xylmin  = ZERO
-xylmax  = ONE
-zlmin   = ZERO
-zlmax   = ONE
+xylmin  = 0
+xylmax  = 1
+zlmin   = 0
+zlmax   = 1
 aoF2F   = ZERO
 ndfrm   = 0
 lptb    = FALSE
